@@ -2,6 +2,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Array based storage for Resumes
@@ -45,7 +46,7 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return storage;
+        return Arrays.stream(storage).filter(Objects::nonNull).toArray(Resume[]::new);
     }
 
     int size() {
