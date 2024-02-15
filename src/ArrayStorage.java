@@ -1,18 +1,21 @@
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10];
+    Resume[] storage = new Resume[10000];
 
     void clear() {
-        Arrays.fill(storage, null);
+        Arrays.fill(storage, 0, size(), null);
     }
 
     void save(Resume r) {
         for (int i = 0; i < storage.length; i++) {
-            if(storage[i] == null){
+            if (storage[i] == null) {
                 storage[i] = r;
                 break;
             }
@@ -20,14 +23,9 @@ public class ArrayStorage {
     }
 
     Resume get(String uuid) {
-        try {
-            for (var item : storage) {
-                if (item.uuid.equals(uuid))
-                    return item;
-            }
-        }
-        catch (NullPointerException nullPointerException){
-            System.out.println("Database haven't this id");
+        for (var item : storage) {
+            if (item != null && item.uuid.equals(uuid))
+                return item;
         }
         return null;
     }
@@ -35,17 +33,12 @@ public class ArrayStorage {
     void delete(String uuid) {
         int index = 0;
         for (int i = 0; i < storage.length; i++) {
-            if(storage[i].uuid.equals(uuid)){
+            if (storage[i].uuid.equals(uuid)) {
                 index = i;
                 break;
             }
-
         }
-
-        for (int i = index; i < storage.length-1; i++)
-            storage[i] = storage[i+1];
-
-        storage = Arrays.copyOf(storage, storage.length - 1);
+        storage = ArrayUtils.remove(storage, index);
     }
 
     /**
@@ -56,6 +49,6 @@ public class ArrayStorage {
     }
 
     int size() {
-        return storage.length;
+        return (int) Arrays.stream(storage).filter(Objects::nonNull).count();
     }
 }
