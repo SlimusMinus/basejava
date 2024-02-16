@@ -34,11 +34,14 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        Resume delResume = Arrays.stream(storage).filter(res->res.uuid.equals(uuid)).findFirst().get();
-        int indexOf = Arrays.asList(storage).indexOf(delResume);
-        storage[indexOf] = storage[sizeStorage - 1];
-        storage[sizeStorage - 1] = null;
-        sizeStorage--;
+        for (int i = 0; i < storage.length; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                storage[i] = storage[sizeStorage - 1];
+                storage[sizeStorage - 1] = null;
+                sizeStorage--;
+                break;
+            }
+        }
     }
 
     /**
