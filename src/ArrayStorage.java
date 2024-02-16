@@ -2,16 +2,17 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
+    int sizeStorage;
 
     void clear() {
-        Arrays.fill(storage, 0, size(), null);
+        Arrays.fill(storage, 0, sizeStorage, null);
+        sizeStorage = 0;
     }
 
     void save(Resume r) {
@@ -21,12 +22,13 @@ public class ArrayStorage {
                 break;
             }
         }
+        sizeStorage = size();
     }
 
     Resume get(String uuid) {
-        for (var item : storage) {
-            if (item != null && item.uuid.equals(uuid))
-                return item;
+        for (int i = 0; i < sizeStorage; i++) {
+            if (storage[i].uuid.equals(uuid))
+                return storage[i];
         }
         return null;
     }
@@ -39,14 +41,16 @@ public class ArrayStorage {
                 break;
             }
         }
-        storage = ArrayUtils.remove(storage, index);
+        storage[index] = storage[sizeStorage-1];
+        storage[sizeStorage-1] = null;
+        sizeStorage--;
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.stream(storage).filter(Objects::nonNull).toArray(Resume[]::new);
+        return Arrays.copyOfRange(storage, 0, sizeStorage);
     }
 
     int size() {
