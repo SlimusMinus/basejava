@@ -1,5 +1,3 @@
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -8,7 +6,7 @@ import java.util.Objects;
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    int sizeStorage;
+    int sizeStorage = 0;
 
     void clear() {
         Arrays.fill(storage, 0, sizeStorage, null);
@@ -16,13 +14,8 @@ public class ArrayStorage {
     }
 
     void save(Resume r) {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] == null) {
-                storage[i] = r;
-                break;
-            }
-        }
-        sizeStorage = size();
+        storage[sizeStorage] = r;
+        sizeStorage++;
     }
 
     Resume get(String uuid) {
@@ -34,7 +27,7 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        for (int i = 0; i < storage.length; i++) {
+        for (int i = 0; i < sizeStorage; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 storage[i] = storage[sizeStorage - 1];
                 storage[sizeStorage - 1] = null;
@@ -48,10 +41,10 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, sizeStorage);
+        return Arrays.copyOf(storage, sizeStorage);
     }
 
     int size() {
-        return (int) Arrays.stream(storage).filter(Objects::nonNull).count();
+        return sizeStorage;
     }
 }
