@@ -21,8 +21,6 @@ public class ArrayStorage {
             System.out.println("Storage is full");
         else if (storage[sizeStorage] != null && storage[sizeStorage].getUuid().equals(r.getUuid()))
             System.out.println("Storage have resume with " + r.getUuid() + " uuid");
-        else if (sizeStorage == 9998)
-            storage[sizeStorage] = r;
         else {
             storage[sizeStorage] = r;
             sizeStorage++;
