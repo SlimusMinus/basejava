@@ -28,10 +28,9 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        if (sizeStorage == 0) {
+        if (sizeStorage == 0)
             System.out.println("Storage is empty, resume with " + uuid + " uuid isn't get");
-            return null;
-        } else {
+        else {
             for (int i = 0; i < sizeStorage; i++) {
                 if (storage[i].getUuid().equals(uuid))
                     return storage[i];
@@ -76,5 +75,4 @@ public class ArrayStorage {
             }
         }
     }
-
 }
