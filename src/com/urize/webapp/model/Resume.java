@@ -1,7 +1,5 @@
 package com.urize.webapp.model;
 
-import java.util.List;
-
 /**
  * Initial resume class
  */

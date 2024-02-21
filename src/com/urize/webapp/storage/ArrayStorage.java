@@ -20,7 +20,7 @@ public class ArrayStorage {
     public void save(Resume r) {
         if (sizeStorage > STORAGE_LIMIT - 1)
             System.out.println("Storage is full");
-        else if (storage[sizeStorage] != null && storage[sizeStorage].getUuid().equals(r.getUuid()))
+        else if (Arrays.asList(storage).contains(r))
             System.out.println("Storage have resume with " + r.getUuid() + " uuid");
         else {
             storage[sizeStorage] = r;
