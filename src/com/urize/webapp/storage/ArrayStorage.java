@@ -1,6 +1,7 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.model.Resume;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.Arrays;
 
@@ -18,28 +19,29 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        if (sizeStorage > STORAGE_LIMIT - 1)
+        if (sizeStorage >= STORAGE_LIMIT) {
             System.out.println("Storage is full");
-        else if (Arrays.asList(storage).contains(r))
-            System.out.println("Storage have resume with " + r.getUuid() + " uuid");
-        else {
+        } else if (getIndex(r.getUuid()) != -1) {
+            System.out.println("Resume " + r.getUuid() + " already exist");
+        } else {
             storage[sizeStorage] = r;
             sizeStorage++;
         }
     }
 
     public Resume get(String uuid) {
-        if (sizeStorage == 0)
-            System.out.println("Storage is empty, resume with " + uuid + " uuid isn't get");
-        else if (getIndex(uuid) != -1)
+        if (getIndex(uuid) != -1) {
             return storage[getIndex(uuid)];
+        } else {
+            System.out.println("Resume with " + uuid + " not found");
+        }
         return null;
     }
 
     public void delete(String uuid) {
-        if (sizeStorage == 0)
-            System.out.println("Storage is empty, resume with " + uuid + " uuid isn't delete");
-        else {
+        if (getIndex(uuid) == -1) {
+            System.out.println("Resume with " + uuid + " not found");
+        } else {
             storage[getIndex(uuid)] = storage[sizeStorage - 1];
             storage[sizeStorage - 1] = null;
             sizeStorage--;
@@ -55,18 +57,19 @@ public class ArrayStorage {
     }
 
     public void update(Resume resume) {
-        if (sizeStorage == 0)
-            System.out.println("Storage is empty, resume with " + resume.getUuid() + " uuid isn't update");
-         else
-            storage[getIndex(resume.getUuid())].setUuid("new uuid");
+        if (getIndex(resume.getUuid()) == -1) {
+            System.out.println("Resume with " + resume.getUuid() + " not found");
+        } else {
+            storage[getIndex(resume.getUuid())] = resume;
+        }
     }
 
     public int getIndex(String uuid) {
-        int index = -1;
         for (int i = 0; i < sizeStorage; i++) {
-            if (storage[i].getUuid().equals(uuid))
-                index = i;
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
+            }
         }
-        return index;
+        return -1;
     }
 }
