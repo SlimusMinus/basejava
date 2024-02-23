@@ -1,16 +1,15 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.model.Resume;
-import org.w3c.dom.ls.LSOutput;
 
 import java.util.Arrays;
 
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage {
+public class ArrayStorage implements Storage {
+    public static final int STORAGE_LIMIT = 10000;
     private final Resume[] storage = new Resume[STORAGE_LIMIT];
-    private static final int STORAGE_LIMIT = 10000;
     private int sizeStorage = 0;
 
     public void clear() {
@@ -30,19 +29,21 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        if (getIndex(uuid) != -1) {
-            return storage[getIndex(uuid)];
+        int index = getIndex(uuid);
+        if (index != -1) {
+            return storage[index];
         } else {
             System.out.println("Resume with " + uuid + " not found");
+            return null;
         }
-        return null;
     }
 
     public void delete(String uuid) {
-        if (getIndex(uuid) == -1) {
+        int index = getIndex(uuid);
+        if (index == -1) {
             System.out.println("Resume with " + uuid + " not found");
         } else {
-            storage[getIndex(uuid)] = storage[sizeStorage - 1];
+            storage[index] = storage[sizeStorage - 1];
             storage[sizeStorage - 1] = null;
             sizeStorage--;
         }
@@ -57,14 +58,15 @@ public class ArrayStorage {
     }
 
     public void update(Resume resume) {
-        if (getIndex(resume.getUuid()) == -1) {
+        int index = getIndex(resume.getUuid());
+        if (index == -1) {
             System.out.println("Resume with " + resume.getUuid() + " not found");
         } else {
-            storage[getIndex(resume.getUuid())] = resume;
+            storage[index] = resume;
         }
     }
 
-    public int getIndex(String uuid) {
+    private int getIndex(String uuid) {
         for (int i = 0; i < sizeStorage; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
