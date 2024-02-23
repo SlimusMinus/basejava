@@ -1,20 +1,20 @@
 import com.urize.webapp.model.Resume;
-import com.urize.webapp.storage.ArrayStorage;
+import com.urize.webapp.storage.SortedArrayStorage;
 import com.urize.webapp.storage.Storage;
 
 /**
  * Test for your com.urize.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage{
-    private static final Storage ARRAY_STORAGE = new ArrayStorage();
+    private static final Storage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
         final Resume r1 = new Resume();
-        r1.setUuid("uuid1");
+        r1.setUuid("uuid333");
         final Resume r2 = new Resume();
-        r2.setUuid("uuid2");
+        r2.setUuid("uuid112");
         final Resume r3 = new Resume();
-        r3.setUuid("uuid3");
+        r3.setUuid("uuid404");
 
         ARRAY_STORAGE.save(r1);
         ARRAY_STORAGE.save(r2);
@@ -27,14 +27,14 @@ public class MainTestArrayStorage{
 
         printAll();
         ARRAY_STORAGE.delete(r1.getUuid());
-        /*
-         * realize method update*/
+
         ARRAY_STORAGE.update(r2);
         printAll();
         ARRAY_STORAGE.clear();
         printAll();
 
         System.out.println("Size: " + ARRAY_STORAGE.size());
+
     }
 
     static void printAll() {
