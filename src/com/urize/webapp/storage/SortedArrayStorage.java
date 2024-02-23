@@ -7,11 +7,9 @@ import java.util.Arrays;
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public void save(Resume r) {
+    public void saveElement(Resume r) {
         int j = Arrays.binarySearch(storage, 0, sizeStorage, r);
-        if (sizeStorage >= STORAGE_LIMIT) {
-            System.out.println("Storage is full");
-        } else if (j > 0) {
+        if (j > 0) {
             System.out.println("Resume already exist");
         } else {
             if (j < 0) {

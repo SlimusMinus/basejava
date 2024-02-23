@@ -8,11 +8,9 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage extends AbstractArrayStorage {
-    public void save(Resume r) {
-        if (sizeStorage >= STORAGE_LIMIT) {
-            System.out.println("Storage is full");
-        } else if (getIndex(r.getUuid()) != -1) {
-            System.out.println("Resume " + r.getUuid() + " already exist");
+    public void saveElement(Resume r) {
+        if (getIndex(r.getUuid()) != -1) {
+            System.out.println("Resume already exist");
         } else {
             storage[sizeStorage] = r;
             sizeStorage++;
