@@ -2,19 +2,19 @@ package com.urize.webapp.storage;
 
 import com.urize.webapp.model.Resume;
 
-import java.util.Arrays;
-
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage extends AbstractArrayStorage {
-    public void saveElement(Resume r) {
-        if (getIndex(r.getUuid()) != -1) {
-            System.out.println("Resume already exist");
-        } else {
-            storage[sizeStorage] = r;
-            sizeStorage++;
-        }
+    @Override
+    public int isExist(Resume resume) {
+        return getIndex(resume.getUuid());
+    }
+
+    public void saveElement(Resume resume) {
+        storage[sizeStorage] = resume;
+        sizeStorage++;
+
     }
 
     public int getIndex(String uuid) {
@@ -24,5 +24,12 @@ public class ArrayStorage extends AbstractArrayStorage {
             }
         }
         return -1;
+    }
+
+    @Override
+    public void deleteTemplateMethod(String uuid) {
+        storage[getIndex(uuid)] = storage[sizeStorage - 1];
+        storage[sizeStorage - 1] = null;
+        sizeStorage--;
     }
 }
