@@ -12,9 +12,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         if (j > 0) {
             System.out.println("Resume already exist");
         } else {
-            if (j < 0) {
-                j = -j - 1;
-            }
+            j = -j - 1;
             System.arraycopy(storage, j, storage, j + 1, sizeStorage - j);
             storage[j] = r;
             sizeStorage++;
