@@ -8,7 +8,6 @@ public abstract class AbstractArrayStorage implements Storage {
     protected static final int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int sizeStorage = 0;
-    private int index = 0;
 
     public void clear() {
         Arrays.fill(storage, 0, sizeStorage, null);
@@ -16,17 +15,19 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void save(Resume resume) {
+        int index = getIndex(resume.getUuid());
         if (sizeStorage >= STORAGE_LIMIT) {
             System.out.println("Storage is full");
-        } else if (isExist(resume) >= 0) {
+        } else if (isExist(index)) {
             System.out.println("Resume is exist in storage");
         } else {
-            saveElement(resume);
+            saveElement(resume, sizeStorage);
+            sizeStorage++;
         }
     }
 
     public Resume get(String uuid) {
-        index = getIndex(uuid);
+        int index = getIndex(uuid);
         if (index >= 0) {
             return storage[index];
         } else {
@@ -36,11 +37,13 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void delete(String uuid) {
-        index = getIndex(uuid);
+        int index = getIndex(uuid);
         if (index == -1) {
             resumeNotFound(uuid);
         } else {
-            deleteTemplateMethod(uuid);
+            deleteTemplateMethod(index);
+            storage[sizeStorage - 1] = null;
+            sizeStorage--;
         }
     }
 
@@ -53,23 +56,23 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void update(Resume resume) {
-        index = getIndex(resume.getUuid());
+        int index = getIndex(resume.getUuid());
         if (index == -1) {
             resumeNotFound(resume.getUuid());
         } else {
             storage[index] = resume;
         }
     }
-
     private void resumeNotFound(String uuid) {
         System.out.println("Resume with " + uuid + " not found");
     }
 
-    public abstract int isExist(Resume resume);
+    public abstract boolean isExist(int index);
 
-    public abstract void saveElement(Resume resume);
+    public abstract void saveElement(Resume resume, int sizeStorage);
 
     public abstract int getIndex(String uuid);
-    public abstract void deleteTemplateMethod(String uuid);
+
+    public abstract void deleteTemplateMethod(int index);
 
 }

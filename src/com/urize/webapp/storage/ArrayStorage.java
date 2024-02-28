@@ -6,15 +6,14 @@ import com.urize.webapp.model.Resume;
  * Array based storage for Resumes
  */
 public class ArrayStorage extends AbstractArrayStorage {
+
     @Override
-    public int isExist(Resume resume) {
-        return getIndex(resume.getUuid());
+    public boolean isExist(int index) {
+        return index != -1;
     }
 
-    public void saveElement(Resume resume) {
+    public void saveElement(Resume resume, int sizeStorage) {
         storage[sizeStorage] = resume;
-        sizeStorage++;
-
     }
 
     public int getIndex(String uuid) {
@@ -27,9 +26,7 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    public void deleteTemplateMethod(String uuid) {
-        storage[getIndex(uuid)] = storage[sizeStorage - 1];
-        storage[sizeStorage - 1] = null;
-        sizeStorage--;
+    public void deleteTemplateMethod(int index) {
+        storage[index] = storage[sizeStorage - 1];
     }
 }

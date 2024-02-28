@@ -7,17 +7,16 @@ import java.util.Arrays;
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public int isExist(Resume resume) {
-        return Arrays.binarySearch(storage, 0, sizeStorage, resume);
+    public boolean isExist(int index) {
+        return index > 0;
     }
 
     @Override
-    public void saveElement(Resume resume) {
-        int j = isExist(resume);
-        j = -j - 1;
-        System.arraycopy(storage, j, storage, j + 1, sizeStorage - j);
-        storage[j] = resume;
-        sizeStorage++;
+    public void saveElement(Resume resume, int sizeStorage) {
+        int insertionIndex = Arrays.binarySearch(storage, 0, sizeStorage, resume);
+        insertionIndex = -insertionIndex - 1;
+        System.arraycopy(storage, insertionIndex, storage, insertionIndex + 1, sizeStorage - insertionIndex);
+        storage[insertionIndex] = resume;
     }
 
     @Override
@@ -27,11 +26,11 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         return Arrays.binarySearch(storage, 0, sizeStorage, key);
     }
 
-    public void deleteTemplateMethod(String uuid){
-        for (int i = getIndex(uuid); i < sizeStorage; i++) {
-            storage[i-1] = storage[i];
+    public void deleteTemplateMethod(int index){
+        int moveNum = sizeStorage - index - 1;
+        if (moveNum > 0) {
+            System.arraycopy(storage, index + 1, storage, index, moveNum);
         }
-        sizeStorage--;
     }
 
 }

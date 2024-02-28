@@ -1,4 +1,5 @@
 import com.urize.webapp.model.Resume;
+import com.urize.webapp.storage.ArrayStorage;
 import com.urize.webapp.storage.SortedArrayStorage;
 import com.urize.webapp.storage.Storage;
 
@@ -32,7 +33,7 @@ public class MainTestArrayStorage{
         System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
 
         printAll();
-        ARRAY_STORAGE.delete(r3.getUuid());
+        ARRAY_STORAGE.delete(r5.getUuid());
 
         ARRAY_STORAGE.update(r2);
         printAll();
