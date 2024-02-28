@@ -7,12 +7,7 @@ import java.util.Arrays;
 public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public boolean isExist(int index) {
-        return index > 0;
-    }
-
-    @Override
-    public void saveElement(Resume resume, int sizeStorage) {
+    public void saveElement(Resume resume) {
         int insertionIndex = Arrays.binarySearch(storage, 0, sizeStorage, resume);
         insertionIndex = -insertionIndex - 1;
         System.arraycopy(storage, insertionIndex, storage, insertionIndex + 1, sizeStorage - insertionIndex);

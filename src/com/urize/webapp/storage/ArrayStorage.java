@@ -7,12 +7,7 @@ import com.urize.webapp.model.Resume;
  */
 public class ArrayStorage extends AbstractArrayStorage {
 
-    @Override
-    public boolean isExist(int index) {
-        return index != -1;
-    }
-
-    public void saveElement(Resume resume, int sizeStorage) {
+    public void saveElement(Resume resume) {
         storage[sizeStorage] = resume;
     }
 
