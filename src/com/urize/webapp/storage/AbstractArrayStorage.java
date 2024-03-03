@@ -1,5 +1,8 @@
 package com.urize.webapp.storage;
 
+import com.urize.webapp.exception.ResumeExistStorageException;
+import com.urize.webapp.exception.StorageException;
+import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -17,9 +20,9 @@ public abstract class AbstractArrayStorage implements Storage {
     public void save(Resume resume) {
         int index = getIndex(resume.getUuid());
         if (sizeStorage >= STORAGE_LIMIT) {
-            System.out.println("Storage is full");
+            throw new StorageException("Storage is full", resume.getUuid());
         } else if (index >= 0) {
-            System.out.println("Resume is exist in storage");
+            throw new ResumeExistStorageException(resume.getUuid());
         } else {
             saveElement(resume);
             sizeStorage++;
@@ -31,15 +34,14 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             return storage[index];
         } else {
-            resumeNotFound(uuid);
-            return null;
+            throw new StorageNotFoundException(uuid);
         }
     }
 
     public void delete(String uuid) {
         int index = getIndex(uuid);
-        if (index == -1) {
-            resumeNotFound(uuid);
+        if (index < 0) {
+            throw new StorageNotFoundException(uuid);
         } else {
             deleteTemplateMethod(index);
             storage[sizeStorage - 1] = null;
@@ -57,16 +59,12 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public void update(Resume resume) {
         int index = getIndex(resume.getUuid());
-        if (index == -1) {
-            resumeNotFound(resume.getUuid());
+        if (index < 0) {
+            throw new StorageNotFoundException(resume.getUuid());
         } else {
             storage[index] = resume;
         }
     }
-    private void resumeNotFound(String uuid) {
-        System.out.println("Resume with " + uuid + " not found");
-    }
-
     public abstract void saveElement(Resume resume);
 
     public abstract int getIndex(String uuid);
