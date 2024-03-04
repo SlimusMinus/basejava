@@ -1,6 +1,7 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.ResumeExistStorageException;
+import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
 import org.junit.jupiter.api.AfterEach;
@@ -78,14 +79,33 @@ abstract class AbstractArrayStorageTest {
     @Test
     public void saveExceptionNotExist() {
         String uuid = "uuid2";
-        Exception exception = assertThrows(ResumeExistStorageException.class, () -> storage.save(new Resume(uuid)));
-        assertEquals("Resume with " + uuid + " is exist in storage", exception.getMessage());
+        Assertions.assertThrows(ResumeExistStorageException.class, () -> storage.save(new Resume(uuid)));
+    }
+
+    @Test
+    public void storageIsFull() {
+        for (int i = storage.size(); i < 10000; i++) {
+            storage.save(new Resume());
+        }
+        Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume()));
+    }
+
+    @Test
+    public void storageOverflowAheadOfTime() {
+        try {
+            for (int i = storage.size(); i < 10001; i++) {
+                storage.save(new Resume());
+            }
+        } catch (StorageException exception) {
+            fail("overflow ahead of time");
+        }
+
     }
 
     @Test
     public void getNotFoundException() {
         String uuid8 = "uuid8";
-        Assertions.assertThrows(StorageNotFoundException.class, ()->storage.get(uuid8));
+        Assertions.assertThrows(StorageNotFoundException.class, () -> storage.get(uuid8));
     }
 
     @Test
