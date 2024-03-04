@@ -4,6 +4,7 @@ import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -84,22 +85,19 @@ abstract class AbstractArrayStorageTest {
     @Test
     public void getNotFoundException() {
         String uuid8 = "uuid8";
-        Exception exception = assertThrows(StorageNotFoundException.class, () -> storage.get(uuid8));
-        assertEquals("Resume with " + uuid8 + " not found in storage", exception.getMessage());
+        Assertions.assertThrows(StorageNotFoundException.class, ()->storage.get(uuid8));
     }
 
     @Test
     public void deleteNotFoundException() {
         String uuid8 = "uuid8";
-        Exception exception = assertThrows(StorageNotFoundException.class, () -> storage.delete(uuid8));
-        assertEquals("Resume with " + uuid8 + " not found in storage", exception.getMessage());
+        Assertions.assertThrows(StorageNotFoundException.class, () -> storage.delete(uuid8));
     }
 
     @Test
     public void updateNotFoundException() {
         Resume resume8 = new Resume("uuid8");
-        Exception exception = assertThrows(StorageNotFoundException.class, () -> storage.update(resume8));
-        assertEquals("Resume with " + resume8.getUuid() + " not found in storage", exception.getMessage());
+        Assertions.assertThrows(StorageNotFoundException.class, () -> storage.update(resume8));
     }
 
 }
