@@ -1,4 +1,4 @@
-package com.urize.webapp.storage.array;
+package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageException;
@@ -25,7 +25,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void saveKey(Object searchKey, Resume resume) {
+    protected void doSave(Object searchKey, Resume resume) {
         if (sizeStorage >= STORAGE_LIMIT) {
             throw new StorageException("Storage is full", resume.getUuid());
         } else {
@@ -41,19 +41,19 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void deleteKey(Object searchKey) {
+    protected void doDelete(Object searchKey) {
         deleteTemplateMethod((Integer) searchKey);
         storage[sizeStorage - 1] = null;
         sizeStorage--;
     }
 
     @Override
-    protected void updateKey(Object searchKey, Resume resume){
+    protected void doUpdate(Object searchKey, Resume resume){
         storage[(Integer) searchKey] = resume;
     }
 
     @Override
-    protected boolean isExistResume(Object index) {
+    protected boolean isExisting(Object index) {
         return (Integer) index >= 0;
     }
 

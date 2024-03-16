@@ -1,10 +1,9 @@
-package com.urize.webapp.storage.array;
+package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
-import com.urize.webapp.storage.Storage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class AbstractArrayStorageTest {
+public abstract class AbstractStorageTest {
     final Storage storage;
     private final String UUID1 = "uuid1";
     private final String UUID2 = "uuid2";
@@ -26,7 +25,7 @@ public abstract class AbstractArrayStorageTest {
     private final Resume[] emptyArray = new Resume[0];
     private final Resume[] expected = new Resume[]{resume1, resume2, resume3};
 
-    public AbstractArrayStorageTest(Storage storage) {
+    public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
@@ -93,14 +92,7 @@ public abstract class AbstractArrayStorageTest {
         Assertions.assertThrows(ResumeExistStorageException.class, () -> storage.save(new Resume(UUID2)));
     }
 
-    @Test
-    public void storageOverflow() {
-        storage.clear();
-        for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-            storage.save(new Resume());
-        }
-        Assertions.assertThrows(StorageException.class, () -> storage.save(new Resume()));
-    }
+
 
     @Test
     public void getNotFoundException() {

@@ -1,4 +1,4 @@
-package com.urize.webapp.storage.array;
+package com.urize.webapp.storage;
 
 import com.urize.webapp.model.Resume;
 

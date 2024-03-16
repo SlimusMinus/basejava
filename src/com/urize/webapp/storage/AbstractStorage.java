@@ -7,21 +7,21 @@ import com.urize.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
     protected abstract Integer getSearchKey(String uuid);
-    protected abstract boolean isExistResume(Object searchKey);
+    protected abstract boolean isExisting(Object searchKey);
 
-    protected abstract void deleteKey(Object searchKey);
+    protected abstract void doDelete(Object searchKey);
 
-    protected abstract void saveKey(Object searchKey, Resume resume);
+    protected abstract void doSave(Object searchKey, Resume resume);
 
     protected abstract Resume getKey(Object searchKey, String uuid);
 
-    protected abstract void updateKey(Object searchKey, Resume resume);
+    protected abstract void doUpdate(Object searchKey, Resume resume);
 
 
 
     public void save(Resume resume) {
         Object searchKey = getNotExistedResume(resume.getUuid());
-        saveKey(searchKey, resume);
+        doSave(searchKey, resume);
     }
 
 
@@ -33,18 +33,18 @@ public abstract class AbstractStorage implements Storage {
 
     public void delete(String uuid) {
         Object searchKey = getExistedResume(uuid);
-        deleteKey(searchKey);
+        doDelete(searchKey);
     }
 
 
     public void update(Resume resume) {
         Object searchKey = getExistedResume(resume.getUuid());
-        updateKey(searchKey, resume);
+        doUpdate(searchKey, resume);
     }
 
     public Object getExistedResume(String uuid) {
         Object searchKey = getSearchKey(uuid);
-        if (!isExistResume(searchKey)) {
+        if (!isExisting(searchKey)) {
             throw new StorageNotFoundException(uuid);
         }
         return searchKey;
@@ -52,7 +52,7 @@ public abstract class AbstractStorage implements Storage {
 
     private Object getNotExistedResume(String uuid) {
         Object searchKey = getSearchKey(uuid);
-        if (isExistResume(searchKey)) {
+        if (isExisting(searchKey)) {
             throw new ResumeExistStorageException(uuid);
         }
         return searchKey;
