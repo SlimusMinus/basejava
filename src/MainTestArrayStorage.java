@@ -1,10 +1,9 @@
 import com.urize.webapp.model.Resume;
-import com.urize.webapp.storage.ArrayStorage;
-import com.urize.webapp.storage.SortedArrayStorage;
+import com.urize.webapp.storage.array.SortedArrayStorage;
 import com.urize.webapp.storage.Storage;
 
 /**
- * Test for your com.urize.webapp.storage.ArrayStorage implementation
+ * Test for your com.urize.webapp.storage.simpleStorage.ArrayStorage implementation
  */
 public class MainTestArrayStorage{
     private static final Storage ARRAY_STORAGE = new SortedArrayStorage();

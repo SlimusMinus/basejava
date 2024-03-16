@@ -1,4 +1,4 @@
-package com.urize.webapp.storage;
+package com.urize.webapp.storage.array;
 
 import com.urize.webapp.model.Resume;
 
@@ -14,12 +14,6 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         storage[insertionIndex] = resume;
     }
 
-    @Override
-    public int getIndex(String uuid) {
-        Resume key = new Resume(uuid);
-        return Arrays.binarySearch(storage, 0, sizeStorage, key);
-    }
-
     public void deleteTemplateMethod(int index){
         int moveNum = sizeStorage - index - 1;
         if (moveNum > 0) {
@@ -27,4 +21,9 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         }
     }
 
+    @Override
+    protected Integer getSearchKey(String uuid) {
+        Resume key = new Resume(uuid);
+        return Arrays.binarySearch(storage, 0, sizeStorage, key);
+    }
 }

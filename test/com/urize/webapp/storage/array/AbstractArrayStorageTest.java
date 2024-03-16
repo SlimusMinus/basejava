@@ -1,16 +1,14 @@
-package com.urize.webapp.storage;
+package com.urize.webapp.storage.array;
 
 import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
+import com.urize.webapp.storage.Storage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -106,7 +104,7 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void getNotFoundException() {
-        Assertions.assertThrows(StorageNotFoundException.class, () -> storage.get(UUID_NOT_EXIST));
+            Assertions.assertThrows(StorageNotFoundException.class, () -> storage.get(UUID_NOT_EXIST));
     }
 
     @Test

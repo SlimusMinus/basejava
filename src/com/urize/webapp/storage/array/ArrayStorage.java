@@ -1,4 +1,4 @@
-package com.urize.webapp.storage;
+package com.urize.webapp.storage.array;
 
 import com.urize.webapp.model.Resume;
 
@@ -11,17 +11,18 @@ public class ArrayStorage extends AbstractArrayStorage {
         storage[sizeStorage] = resume;
     }
 
-    public int getIndex(String uuid) {
+    @Override
+    public void deleteTemplateMethod(int index) {
+        storage[index] = storage[sizeStorage - 1];
+    }
+
+    @Override
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < sizeStorage; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }
         }
         return -1;
-    }
-
-    @Override
-    public void deleteTemplateMethod(int index) {
-        storage[index] = storage[sizeStorage - 1];
     }
 }

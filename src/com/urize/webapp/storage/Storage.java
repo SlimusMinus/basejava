@@ -2,8 +2,6 @@ package com.urize.webapp.storage;
 
 import com.urize.webapp.model.Resume;
 
-import java.util.Arrays;
-
 /**
  * Array based storage for Resumes
  */
