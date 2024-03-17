@@ -6,7 +6,7 @@ import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
-    protected abstract Integer getSearchKey(String uuid);
+    protected abstract Object getSearchKey(String uuid);
     protected abstract boolean isExisting(Object searchKey);
 
     protected abstract void doDelete(Object searchKey);
