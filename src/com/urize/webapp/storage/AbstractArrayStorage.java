@@ -7,6 +7,7 @@ import com.urize.webapp.model.Resume;
 import com.urize.webapp.storage.AbstractStorage;
 import com.urize.webapp.storage.Storage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getKey(Object searchKey, String uuid){
+    protected Resume getKey(Object searchKey, String uuid) {
         Object index = getSearchKey(uuid);
         return storage[(Integer) index];
     }
@@ -49,7 +50,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume resume){
+    protected void doUpdate(Object searchKey, Resume resume) {
         storage[(Integer) searchKey] = resume;
     }
 
@@ -58,9 +59,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return (Integer) index >= 0;
     }
 
-    public List<Resume> getAllSorted() {
-        return Arrays.asList(Arrays.copyOf(storage, sizeStorage));
-    }
 
     public int size() {
         return sizeStorage;

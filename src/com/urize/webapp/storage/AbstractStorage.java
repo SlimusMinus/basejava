@@ -7,6 +7,7 @@ import com.urize.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
     protected abstract Object getSearchKey(String uuid);
+
     protected abstract boolean isExisting(Object searchKey);
 
     protected abstract void doDelete(Object searchKey);
@@ -16,7 +17,6 @@ public abstract class AbstractStorage implements Storage {
     protected abstract Resume getKey(Object searchKey, String uuid);
 
     protected abstract void doUpdate(Object searchKey, Resume resume);
-
 
 
     public void save(Resume resume) {
@@ -57,5 +57,7 @@ public abstract class AbstractStorage implements Storage {
         }
         return searchKey;
     }
+
+
 
 }

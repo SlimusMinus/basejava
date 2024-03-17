@@ -3,11 +3,12 @@ package com.urize.webapp.storage;
 import com.urize.webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-
-    private final static Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName);
+    private final static Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
 
     @Override
     public void saveElement(Resume resume) {
@@ -26,8 +27,14 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected Integer getSearchKey(String uuid) {
-        Resume key = new Resume(uuid, "");
+        Resume key = new Resume(uuid, "dummy");
         return Arrays.binarySearch(storage, 0, sizeStorage, key, RESUME_COMPARATOR);
     }
 
+    @Override
+    public List<Resume> getAllSorted() {
+        List <Resume> list = Arrays.asList(Arrays.copyOfRange(storage, 0, sizeStorage));
+        list.sort(RESUME_COMPARATOR);
+        return list;
+    }
 }
