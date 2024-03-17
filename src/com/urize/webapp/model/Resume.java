@@ -1,31 +1,28 @@
 package com.urize.webapp.model;
 
-import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Initial resume class
- */
-public class Resume implements Comparable <Resume> {
+public class Resume implements Comparable<Resume> {
 
     // Unique identifier
     private final String uuid;
 
-    public Resume() {
-        this(UUID.randomUUID().toString());
+    private final String fullName;
+
+    public String getFullName() {
+        return fullName;
     }
 
-    public Resume(String uuid) {
+    public Resume(String fullName) {
+        this(UUID.randomUUID().toString(), fullName);
+    }
+
+    public Resume(String uuid, String fullName) {
         this.uuid = uuid;
+        this.fullName = fullName;
     }
 
     public String getUuid() {
-        return uuid;
-    }
-
-
-    @Override
-    public String toString() {
         return uuid;
     }
 
@@ -33,17 +30,29 @@ public class Resume implements Comparable <Resume> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Resume resume = (Resume) o;
-        return Objects.equals(uuid, resume.uuid);
+
+        if (!uuid.equals(resume.uuid)) return false;
+        return fullName.equals(resume.fullName);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        int result = uuid.hashCode();
+        result = 31 * result + fullName.hashCode();
+        return result;
     }
 
     @Override
-    public int compareTo(Resume o) {
-        return uuid.compareTo(o.uuid);
+    public String toString() {
+        return uuid + '(' + fullName + ')';
+    }
+
+    @Override
+    public int compareTo(Resume resume) {
+        int compare = fullName.compareTo(resume.fullName);
+        return compare != 0 ? compare : uuid.compareTo(resume.uuid);
     }
 }

@@ -1,12 +1,13 @@
 package com.urize.webapp.storage;
 
+import com.sun.source.tree.Tree;
 import com.urize.webapp.model.Resume;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class MapStorage extends AbstractStorage{
 
-    HashMap<String, Resume> storage = new HashMap<>();
+    protected final Map<String, Resume> storage = new TreeMap<>();
     @Override
     protected String getSearchKey(String uuid) {
         return uuid;
@@ -43,8 +44,8 @@ public class MapStorage extends AbstractStorage{
     }
 
     @Override
-    public Resume[] getAll() {
-        return storage.values().toArray(new Resume[0]);
+    public List<Resume> getAllSorted() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override

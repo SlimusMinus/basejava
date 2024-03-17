@@ -8,6 +8,7 @@ import com.urize.webapp.storage.AbstractStorage;
 import com.urize.webapp.storage.Storage;
 
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
@@ -57,8 +58,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return (Integer) index >= 0;
     }
 
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, sizeStorage);
+    public List<Resume> getAllSorted() {
+        return Arrays.asList(Arrays.copyOf(storage, sizeStorage));
     }
 
     public int size() {
