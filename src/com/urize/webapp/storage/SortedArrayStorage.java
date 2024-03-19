@@ -8,11 +8,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
-    private final static Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
+    private final static Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getUuid);
 
     @Override
     public void saveElement(Resume resume) {
-        int insertionIndex = Arrays.binarySearch(storage, 0, sizeStorage, resume);
+        int insertionIndex = Arrays.binarySearch(storage, 0, sizeStorage, resume, RESUME_COMPARATOR);
         insertionIndex = -insertionIndex - 1;
         System.arraycopy(storage, insertionIndex, storage, insertionIndex + 1, sizeStorage - insertionIndex);
         storage[insertionIndex] = resume;
