@@ -32,7 +32,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
+    protected List<Resume> goGetAll() {
         List <Resume> list = Arrays.asList(Arrays.copyOfRange(storage, 0, sizeStorage));
         list.sort(RESUME_COMPARATOR);
         return list;

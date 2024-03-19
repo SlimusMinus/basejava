@@ -25,9 +25,9 @@ public abstract class AbstractStorageTest {
     private final String UUID2 = "uuid2";
     private final String UUID3 = "uuid3";
     private final String UUID_NOT_EXIST = "uuid8";
-    private final Resume resume1 = new Resume(UUID1, "Tom");
-    private final Resume resume2 = new Resume(UUID2, "Garry");
-    private final Resume resume3 = new Resume(UUID3,"Tim");
+    private final Resume resume1 = new Resume(UUID2, "Garry");
+    private final Resume resume3 = new Resume(UUID1, "Tom");
+    private final Resume resume2 = new Resume(UUID3,"Tim");
     private final Resume resume4 = new Resume(UUID_NOT_EXIST, "Bill");
     private final Resume resume5 = new Resume(UUID1, "Tom");
     private final List<Resume> emptyArray = new ArrayList<>();

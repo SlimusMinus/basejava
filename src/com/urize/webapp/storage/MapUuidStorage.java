@@ -48,10 +48,8 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        return new ArrayList<>(storage.values());
-
-    }
+    protected List<Resume> goGetAll() {
+        return new ArrayList<>(storage.values());    }
 
     @Override
     public int size() {

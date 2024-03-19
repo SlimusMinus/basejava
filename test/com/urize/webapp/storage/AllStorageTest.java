@@ -12,4 +12,5 @@ import org.junit.platform.suite.api.Suite;
         MapUuidStorageTest.class,
 })
 public class AllStorageTest {
+
 }
