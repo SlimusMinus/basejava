@@ -31,10 +31,4 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         return Arrays.binarySearch(storage, 0, sizeStorage, key, RESUME_COMPARATOR);
     }
 
-    @Override
-    protected List<Resume> goGetAll() {
-        List <Resume> list = Arrays.asList(Arrays.copyOfRange(storage, 0, sizeStorage));
-        list.sort(RESUME_COMPARATOR);
-        return list;
-    }
 }

@@ -1,5 +1,7 @@
 package com.urize.webapp.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Resume implements Comparable<Resume> {
@@ -8,6 +10,25 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
 
     private final String fullName;
+
+    private Map<Contacts, String> contacts = new HashMap<>();
+
+    public Map<SectionType, String> getSections() {
+        return sections;
+    }
+
+    private Map<SectionType, String> sections = new HashMap<>();
+
+    public Resume(String fullName, Map<Contacts, String> contacts,  Map<SectionType, String> sections) {
+        uuid = UUID.randomUUID().toString();
+        this.fullName = fullName;
+        this.contacts = contacts;
+        this.sections = sections;
+    }
+
+    public Map<Contacts, String> getContacts() {
+        return contacts;
+    }
 
     public String getFullName() {
         return fullName;
@@ -47,7 +68,10 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public String toString() {
-        return uuid + '(' + fullName + ')';
+        return "Resume " +
+                "uuid = " + uuid + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", contacts=" + contacts;
     }
 
     @Override

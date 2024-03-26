@@ -1,47 +1,54 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.model.Resume;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage {
-    protected final List <Resume> storage = new ArrayList<>();
+public class ListStorage extends AbstractStorage<Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(ListStorage.class);
+
+    protected final List<Resume> storage = new ArrayList<>();
 
     @Override
     protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
-            if (storage.get(i).getUuid().equals(uuid)){
-               return i;
+            if (storage.get(i).getUuid().equals(uuid)) {
+                return i;
             }
         }
         return null;
     }
 
     @Override
-    protected boolean isExisting(Object searchKey) {
+    protected boolean isExisting(Integer searchKey) {
         return searchKey != null;
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        Resume resume = storage.get((Integer) searchKey);
+    protected void doDelete(Integer searchKey) {
+        log.info("Resume with {} searchKey do delete", storage.get(searchKey));
+        Resume resume = storage.get(searchKey);
         storage.remove(resume);
     }
 
     @Override
-    protected void doSave(Object searchKey, Resume resume) {
+    protected void doSave(Integer searchKey, Resume resume) {
+        log.info("Resume with {} searchKey add in List Storage", searchKey);
         storage.add(resume);
     }
 
     @Override
-    protected Resume getKey(Object searchKey, String uuid) {
-        return storage.get((Integer) searchKey);
+    protected Resume getKey(Integer searchKey, String uuid) {
+        return storage.get(searchKey);
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume resume) {
-        storage.set((Integer) searchKey, resume);
+    protected void doUpdate(Integer searchKey, Resume resume) {
+        storage.set(searchKey, resume);
     }
 
     @Override

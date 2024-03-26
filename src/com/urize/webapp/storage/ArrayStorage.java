@@ -29,8 +29,5 @@ public class ArrayStorage extends AbstractArrayStorage {
         return -1;
     }
 
-    @Override
-    protected List<Resume> goGetAll() {
-        return Arrays.asList(Arrays.copyOf(storage, sizeStorage));
-    }
+
 }

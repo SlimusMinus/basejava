@@ -1,17 +1,18 @@
 package com.urize.webapp.storage;
 
-import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageException;
-import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
-import com.urize.webapp.storage.AbstractStorage;
-import com.urize.webapp.storage.Storage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
+    private static final Logger log = LoggerFactory.getLogger(AbstractArrayStorage.class);
+
     protected static final int STORAGE_LIMIT = 10000;
 
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
@@ -27,8 +28,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Object searchKey, Resume resume) {
+    protected void doSave(Integer searchKey, Resume resume) {
         if (sizeStorage >= STORAGE_LIMIT) {
+            log.info("Storage is full");
             throw new StorageException("Storage is full", resume.getUuid());
         } else {
             saveElement(resume);
@@ -37,28 +39,32 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getKey(Object searchKey, String uuid) {
-        Object index = getSearchKey(uuid);
-        return storage[(Integer) index];
+    protected Resume getKey(Integer searchKey, String uuid) {
+        Integer index = getSearchKey(uuid);
+        return storage[index];
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        deleteTemplateMethod((Integer) searchKey);
+    protected void doDelete(Integer searchKey) {
+        deleteTemplateMethod(searchKey);
         storage[sizeStorage - 1] = null;
         sizeStorage--;
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume resume) {
-        storage[(Integer) searchKey] = resume;
+    protected void doUpdate(Integer searchKey, Resume resume) {
+        storage[ searchKey] = resume;
     }
 
     @Override
-    protected boolean isExisting(Object index) {
-        return (Integer) index >= 0;
+    protected boolean isExisting(Integer index) {
+        return index >= 0;
     }
 
+    @Override
+    protected List<Resume> goGetAll() {
+        return Arrays.asList(Arrays.copyOf(storage, sizeStorage));
+    }
 
     public int size() {
         return sizeStorage;

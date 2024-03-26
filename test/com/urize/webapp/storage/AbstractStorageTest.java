@@ -7,10 +7,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.suite.api.SelectClasses;
-import org.junit.platform.suite.api.SelectPackages;
-import org.junit.platform.suite.api.Suite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public abstract class AbstractStorageTest {
+
     final Storage storage;
     private final String UUID1 = "uuid1";
     private final String UUID2 = "uuid2";
@@ -38,33 +35,33 @@ public abstract class AbstractStorageTest {
     }
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         storage.save(resume1);
         storage.save(resume2);
         storage.save(resume3);
     }
 
     @AfterEach
-    void clearStorage() {
+    public void clearStorage() {
         storage.clear();
     }
 
     @Test
-    void clear() {
+    public void clear() {
         storage.clear();
         assertSize(0);
         assertEquals(emptyArray, storage.getAllSorted());
     }
 
     @Test
-    void save() {
+    public void save() {
         storage.save(resume4);
         assertGet(resume4);
         assertSize(4);
     }
 
     @Test
-    void get() {
+    public void get() {
         assertAll(
                 () -> assertGet(resume1),
                 () -> assertGet(resume2),
@@ -73,24 +70,24 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    void delete() {
+    public void delete() {
         storage.delete(UUID2);
         assertSize(2);
         assertThrows(StorageNotFoundException.class, () -> storage.get(UUID2));
     }
 
     @Test
-    void getAll() {
+    public void getAll() {
         assertEquals(expected, storage.getAllSorted());
     }
 
     @Test
-    void size() {
+    public void size() {
         assertSize(3);
     }
 
     @Test
-    void update() {
+    public void update() {
         storage.update(resume5);
         assertSame(resume5, storage.get(UUID1));
     }
@@ -121,7 +118,7 @@ public abstract class AbstractStorageTest {
         assertEquals(resume, storage.get(resume.getUuid()));
     }
 
-    void assertSize(int size) {
+    public void assertSize(int size) {
         assertEquals(size, storage.size());
     }
 
