@@ -1,20 +1,26 @@
 package com.urize.webapp.model;
 
-public enum SectionType {
-    PERSONAL("Личные качества"),
-    OBJECTIVE("Позиция"),
-    ACHIEVEMENT ("Достижения"),
-    QUALIFICATIONS("Квалификация"),
-    EXPERIENCE("Опыт работы"),
-    EDUCATION("Образование");
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    public final String title;
+public class SectionType {
+    private Map<SectionTypeEnum, String> stringMap = new HashMap<>();
+    private Map<SectionTypeEnum, List<String>> enumListMap = new HashMap<>();
 
-    SectionType(String title) {
-        this.title = title;
+    public Map<SectionTypeEnum, String> getStringMap() {
+        return stringMap;
     }
 
-    public String getTitle() {
-        return title;
+    public Map<SectionTypeEnum, List<String>> getEnumListMap() {
+        return enumListMap;
+    }
+
+    public void fillStringMap(Map<SectionTypeEnum, String> stringMap){
+        this.stringMap = stringMap;
+    }
+
+    public void fillEnumListMap(Map<SectionTypeEnum, List<String>> enumListMap){
+        this.enumListMap = enumListMap;
     }
 }

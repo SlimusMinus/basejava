@@ -12,18 +12,17 @@ public class Resume implements Comparable<Resume> {
     private final String fullName;
 
     private Map<Contacts, String> contacts = new HashMap<>();
+    private SectionType sectionType = new SectionType();
 
-    public Map<SectionType, String> getSections() {
-        return sections;
-    }
-
-    private Map<SectionType, String> sections = new HashMap<>();
-
-    public Resume(String fullName, Map<Contacts, String> contacts,  Map<SectionType, String> sections) {
+    public Resume(String fullName, Map<Contacts, String> contacts, SectionType sectionType) {
         uuid = UUID.randomUUID().toString();
         this.fullName = fullName;
         this.contacts = contacts;
-        this.sections = sections;
+        this.sectionType = sectionType;
+    }
+
+    public SectionType getSectionType() {
+        return sectionType;
     }
 
     public Map<Contacts, String> getContacts() {
