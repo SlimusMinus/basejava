@@ -49,21 +49,23 @@ public class ResumeTestData {
                 "Luxoft\n" + "03/2011 - 04/2011\n" + "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'",
                 "Siemens AG\n" + "01/2005 - 04/2005\n" + "3 месяца обучения мобильным IN сетям (Берлин)");
         listMap.put(SectionTypeEnum.EDUCATION, listEDUCATION);
-
-        sectionType.fillStringMap(stringMap);
-        sectionType.fillEnumListMap(listMap);
+        //Заполняем переменные объекта SectionType
+        sectionType.setStringMap(stringMap);
+        sectionType.setEnumListMap(listMap);
 
 
         Resume resume = new Resume("Alexandr Krylov", contactsStringMap, sectionType);
 
         System.out.println(resume.getFullName());
+        //Цикл по контактам
         for (var item : resume.getContacts().entrySet()){
             System.out.println(item.getKey().getTitle() + " " + item.getValue());
         }
+        //Цикл по секции типами String
         for(var item : resume.getSectionType().getStringMap().entrySet()){
             System.out.println(item.getKey().getTitle() + " " + item.getValue());
         }
-
+        //Цикл по секции типами List
         for(var item : resume.getSectionType().getEnumListMap().entrySet()){
             System.out.println(item.getKey().getTitle() + " " + item.getValue());
         }

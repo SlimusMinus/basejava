@@ -16,11 +16,12 @@ public class SectionType {
         return enumListMap;
     }
 
-    public void fillStringMap(Map<SectionTypeEnum, String> stringMap){
+    public void setStringMap(Map<SectionTypeEnum, String> stringMap) {
         this.stringMap = stringMap;
     }
 
-    public void fillEnumListMap(Map<SectionTypeEnum, List<String>> enumListMap){
+    public void setEnumListMap(Map<SectionTypeEnum, List<String>> enumListMap) {
         this.enumListMap = enumListMap;
     }
+
 }
