@@ -1,18 +1,18 @@
 package com.urize.webapp.model;
 
-public enum Contacts {
+public enum ContactsType {
     PHONE("Телефон"),
     SKYPE("Skype"),
     MAIL("Почта"),
     PROFILE("Профиль"),
     HOMEPAGE("Домашняя страница");
-    private String title;
+    private final String title;
 
     public String getTitle() {
         return title;
     }
 
-    Contacts(String title) {
+    ContactsType(String title) {
         this.title = title;
     }
 }
