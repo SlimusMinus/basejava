@@ -7,15 +7,19 @@ public class CompanySection extends SectionAbstract{
     private final String nameCompany;
     private final List<Period> periodList;
 
+
     public CompanySection(String website, String nameCompany, List<Period> periodList) {
         this.website = website;
         this.nameCompany = nameCompany;
         this.periodList = periodList;
     }
 
+
     @Override
     public void getSections() {
         System.out.println(website + "\n" + nameCompany);
-        periodList.toString();
+        for(var item : periodList){
+            System.out.println(item);
+        }
     }
 }

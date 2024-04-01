@@ -40,7 +40,7 @@ public class ResumeTestData {
                 "администрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, Flyway, Nagios, iReport, OpenCmis, Bonita, pgBounce",
                 "Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, UML, функционального программирования",
                 "Родной русский, английский \"upper intermediate\""));
-        sections.put(SectionType.ACHIEVEMENT, listSection2);
+        sections.put(SectionType.QUALIFICATIONS, listSection2);
 
         //Заполняем CompanySection
         Period period = new Period(LocalDate.of(1997,9,1), LocalDate.of(2005,1,5), "Инженер по аппаратному и программному тестированию", "Тестирование, отладка, внедрение ПО цифровой телефонной станции Alcatel 1000 S12 (CHILL, ASM)");
