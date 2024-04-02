@@ -1,25 +1,34 @@
 package com.urize.webapp.model;
 
 import java.util.List;
+import java.util.Objects;
 
-public class CompanySection extends SectionAbstract{
-    private final String website;
-    private final String nameCompany;
-    private final List<Period> periodList;
+public class CompanySection extends AbstractSection {
+    List<Company> list;
 
-
-    public CompanySection(String website, String nameCompany, List<Period> periodList) {
-        this.website = website;
-        this.nameCompany = nameCompany;
-        this.periodList = periodList;
+    public CompanySection(List<Company> list) {
+        this.list = list;
     }
 
+    public List<Company> getList() {
+        return list;
+    }
 
     @Override
-    public void getSections() {
-        System.out.println(website + "\n" + nameCompany);
-        for(var item : periodList){
-            System.out.println(item);
-        }
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        CompanySection that = (CompanySection) object;
+        return Objects.equals(list, that.list);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(list);
+    }
+
+    @Override
+    public String toString() {
+        return "CompanySection " + "list = " + list;
     }
 }
