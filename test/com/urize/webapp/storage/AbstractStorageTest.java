@@ -92,6 +92,8 @@ public abstract class AbstractStorageTest {
         assertSame(resume5, storage.get(UUID1));
     }
 
+
+
     @Test
     public void saveExistingResume() {
         Assertions.assertThrows(ResumeExistStorageException.class, () -> storage.save(new Resume(UUID2, "Garry")));
@@ -113,6 +115,8 @@ public abstract class AbstractStorageTest {
         Resume resume8 = new Resume(UUID_NOT_EXIST);
         Assertions.assertThrows(StorageNotFoundException.class, () -> storage.update(resume8));
     }
+
+
 
     public void assertGet(Resume resume) {
         assertEquals(resume, storage.get(resume.getUuid()));

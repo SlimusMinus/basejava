@@ -1,16 +1,18 @@
+package com.urize.webapp.storage;
+
 import com.urize.webapp.model.*;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ResumeTestData {
-
-
-    public Resume fillResume(String uuid, String fullName) {
+    public Resume fillResume(String fullName) {
         //Создаем резюме
-        Resume resume = new Resume(uuid, fullName);
+
         //Запоняем контакты
         Map<ContactsType, String> contacts = new HashMap<>();
         contacts.put(ContactsType.SKYPE, "skype:grigory.kislin");
@@ -90,12 +92,12 @@ public class ResumeTestData {
         Period periodEducation22 = new Period(YearMonth.of(1993, Month.SEPTEMBER), YearMonth.of(1996, Month.JULY), "Аспирантура ", "(программист С, С++)");
         Company companyEducation2 = new Company("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики",
                 "https://itmo.ru/", periodEducation2, periodEducation22);
-        Period periodEducation3 = new Period(YearMonth.of(2013, Month.MARCH), YearMonth.of(2013, Month.MAY), "'Functional Programming Principles in Scala' by Martin Odersky", "");
+            Period periodEducation3 = new Period(YearMonth.of(2013, Month.MARCH), YearMonth.of(2013, Month.MAY), "'Functional Programming Principles in Scala' by Martin Odersky", "");
         Company companyEducation3 = new Company("Coursera", "https://Coursera.ru/", periodEducation3);
         CompanySection companyEducations = new CompanySection(List.of(companyEducation, companyEducation2, companyEducation3));
         sections.put(SectionType.EDUCATION, companyEducations);
 
-        return resume;
+        return new Resume(fullName, contacts, sections);
     }
 
 }
