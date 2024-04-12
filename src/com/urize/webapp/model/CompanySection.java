@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class CompanySection extends AbstractSection {
-    List<Company> list;
+    private final List<Company> list;
 
     public CompanySection(List<Company> list) {
+        Objects.requireNonNull(list, "company must be not null");
         this.list = list;
     }
 

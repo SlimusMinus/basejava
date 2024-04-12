@@ -1,26 +1,21 @@
 package com.urize.webapp.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Company {
-    private final String website;
-    private final String name;
-    private final List<Period> periods;
+    private final Link link;
+    private final List<Period> periods = new ArrayList<>();
 
-
-    public Company(String website, String name, List<Period> periodList) {
-        this.website = website;
-        this.name = name;
-        this.periods = periodList;
+    public Company(String name, String url, Period... periods) {
+        this.link = new Link(name, url);
+        Arrays.asList(periods);
     }
 
-    public String getWebsite() {
-        return website;
-    }
-
-    public String getName() {
-        return name;
+    public Link getLink() {
+        return link;
     }
 
     public List<Period> getPeriods() {
@@ -28,20 +23,22 @@ public class Company {
     }
 
     @Override
-    public String toString() {
-        return "Company " + name + "website = " + website + ", periods = " + periods;
-    }
-
-    @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Company company = (Company) object;
-        return Objects.equals(website, company.website) && Objects.equals(name, company.name) && Objects.equals(periods, company.periods);
+        return Objects.equals(link, company.link) && Objects.equals(periods, company.periods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(website, name, periods);
+        return Objects.hash(link, periods);
+    }
+
+    @Override
+    public String toString() {
+        return "Company " +
+                "link = " + link +
+                ", periods=" + periods;
     }
 }

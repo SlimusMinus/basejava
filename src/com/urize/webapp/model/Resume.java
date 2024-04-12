@@ -36,16 +36,24 @@ public class Resume implements Comparable<Resume> {
         return uuid;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
     public Map<ContactsType, String> getContacts() {
         return contacts;
     }
 
     public Map<SectionType, AbstractSection> getSections() {
         return sections;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getContacts(ContactsType type) {
+        return contacts.get(type);
+    }
+
+    public AbstractSection getSections(SectionType type) {
+        return sections.get(type);
     }
 
     @Override
