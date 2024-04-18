@@ -17,9 +17,10 @@ public abstract class AbstractStorage <SK> implements Storage {
 
     protected abstract void doSave(SK searchKey, Resume resume);
 
-    protected abstract Resume getKey(SK searchKey, String uuid);
+    protected abstract Resume doGet(SK searchKey);
 
     protected abstract void doUpdate(SK searchKey, Resume resume);
+    protected abstract List<Resume> doGetAll();
 
 
     public void save(Resume resume) {
@@ -30,7 +31,7 @@ public abstract class AbstractStorage <SK> implements Storage {
 
     public Resume get(String uuid) {
         SK searchKey = getExistedResume(uuid);
-        return getKey(searchKey, uuid);
+        return doGet(searchKey);
     }
 
 
@@ -40,12 +41,11 @@ public abstract class AbstractStorage <SK> implements Storage {
     }
 
     public List<Resume> getAllSorted(){
-        List<Resume> list = goGetAll();
+        List<Resume> list = doGetAll();
         Collections.sort(list);
         return list;
     }
 
-    protected abstract List<Resume> goGetAll();
 
     public void update(Resume resume) {
         SK searchKey = getExistedResume(resume.getUuid());

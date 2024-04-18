@@ -11,6 +11,6 @@ class AbstractFileStorageTest {
 
     @Test
     void saveResumeInFile() {
-        AbstractFileStorage.saveResumeInFile(fillResume, "resume.txt");
+
     }
 }

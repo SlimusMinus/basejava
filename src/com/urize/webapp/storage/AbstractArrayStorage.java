@@ -39,9 +39,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected Resume getKey(Integer searchKey, String uuid) {
-        Integer index = getSearchKey(uuid);
-        return storage[index];
+    protected Resume doGet(Integer searchKey) {
+        return storage[searchKey];
     }
 
     @Override
@@ -62,7 +61,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected List<Resume> goGetAll() {
+    protected List<Resume> doGetAll() {
         return Arrays.asList(Arrays.copyOf(storage, sizeStorage));
     }
 

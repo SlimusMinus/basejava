@@ -42,7 +42,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected Resume getKey(Integer searchKey, String uuid) {
+    protected Resume doGet(Integer searchKey) {
         return storage.get(searchKey);
     }
 
@@ -57,7 +57,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected List<Resume> goGetAll() {
+    protected List<Resume> doGetAll() {
         return storage;
     }
 

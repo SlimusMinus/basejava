@@ -44,6 +44,14 @@ public class Resume implements Comparable<Resume> {
         return sections;
     }
 
+    public void setContacts(Map<ContactsType, String> contacts) {
+        this.contacts = contacts;
+    }
+
+    public void setSections(Map<SectionType, AbstractSection> sections) {
+        this.sections = sections;
+    }
+
     public String getFullName() {
         return fullName;
     }

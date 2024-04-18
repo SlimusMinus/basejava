@@ -32,7 +32,7 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getKey(Object resume, String uuid) {
+    protected Resume doGet(Object resume) {
         return (Resume) resume;
     }
 
@@ -42,7 +42,7 @@ public class MapResumeStorage extends AbstractStorage {
     }
 
     @Override
-    protected List<Resume> goGetAll() {
+    protected List<Resume> doGetAll() {
         return new ArrayList<>(storage.values());
     }
 

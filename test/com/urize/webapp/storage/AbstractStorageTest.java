@@ -2,15 +2,15 @@ package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
-import com.urize.webapp.model.Resume;
+import com.urize.webapp.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.Month;
+import java.time.YearMonth;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,12 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractStorageTest {
 
     final Storage storage;
-    private final String UUID1 = "uuid1";
+    private final static String UUID1 = "uuid1";
     private final String UUID2 = "uuid2";
     private final String UUID3 = "uuid3";
     private final String UUID_NOT_EXIST = "uuid8";
-    private final Resume resume1 = new Resume(UUID2, "Garry");
-    private final Resume resume3 = new Resume(UUID1, "Tom");
+    private final static Resume resume1 = new Resume(UUID1, "Garry");
+    private final Resume resume3 = new Resume(UUID2, "Tom");
     private final Resume resume2 = new Resume(UUID3,"Tim");
     private final Resume resume4 = new Resume(UUID_NOT_EXIST, "Bill");
     private final Resume resume5 = new Resume(UUID1, "Tom");
@@ -33,6 +33,35 @@ public abstract class AbstractStorageTest {
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
+
+    static {
+        Map<ContactsType, String> contacts = new HashMap<>();
+        contacts.put(ContactsType.PHONE, "89874561252");
+        contacts.put(ContactsType.SKYPE, "skype");
+        contacts.put(ContactsType.MAIL, "123@gmail.com");
+        contacts.put(ContactsType.STACKOVERFLOW, "STACKOVERFLOW");
+        contacts.put(ContactsType.LINKEDIN, "LINKEDIN");
+        contacts.put(ContactsType.GITHUB, "GITHUB");
+        resume1.setContacts(contacts);
+
+        Map<SectionType, AbstractSection> sections = new HashMap<>();
+        sections.put(SectionType.OBJECTIVE, new TextSection("position"));
+        sections.put(SectionType.PERSONAL, new TextSection("personal"));
+        sections.put(SectionType.ACHIEVEMENT, new ListSection(Arrays.asList("One", "Two")));
+        sections.put(SectionType.QUALIFICATIONS, new ListSection(Arrays.asList("Three", "Four")));
+
+        sections.put(SectionType.EXPERIENCE,  new CompanySection(List.of(
+                new Company("Company", "http://company.ru",
+                        new Period(YearMonth.of(2005, 1), YearMonth.of(2007, 2), "position1", "content1"),
+                        new Period(YearMonth.of(2007, 2), YearMonth.of(2009, 4), "position2", "content2")))));
+
+        sections.put(SectionType.EDUCATION, new CompanySection(List.of(
+                new Company("University", "http://university.ru",
+                        new Period(YearMonth.of(2002, 1), YearMonth.of(2003, 2), "student", "study"),
+                        new Period(YearMonth.of(2003, 2), YearMonth.of(2004, 4), "aspirant", "teacher")))));
+        resume1.setSections(sections);
+    }
+
 
     @BeforeEach
     public void setUp() {
