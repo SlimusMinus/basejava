@@ -51,13 +51,13 @@ public abstract class AbstractStorageTest {
 
         sections.put(SectionType.EXPERIENCE,  new CompanySection(List.of(
                 new Company("Company", "http://company.ru",
-                        new Period(YearMonth.of(2005, 1), YearMonth.of(2007, 2), "position1", "content1"),
-                        new Period(YearMonth.of(2007, 2), YearMonth.of(2009, 4), "position2", "content2")))));
+                        new Company.Period(YearMonth.of(2005, 1), YearMonth.of(2007, 2), "position1", "content1"),
+                        new Company.Period(YearMonth.of(2007, 2), YearMonth.of(2009, 4), "position2", "content2")))));
 
         sections.put(SectionType.EDUCATION, new CompanySection(List.of(
                 new Company("University", "http://university.ru",
-                        new Period(YearMonth.of(2002, 1), YearMonth.of(2003, 2), "student", "study"),
-                        new Period(YearMonth.of(2003, 2), YearMonth.of(2004, 4), "aspirant", "teacher")))));
+                        new Company.Period(YearMonth.of(2002, 1), YearMonth.of(2003, 2), "student", "study"),
+                        new Company.Period(YearMonth.of(2003, 2), YearMonth.of(2004, 4), "aspirant", "teacher")))));
         resume1.setSections(sections);
     }
 

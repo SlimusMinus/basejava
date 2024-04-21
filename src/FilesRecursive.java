@@ -8,16 +8,17 @@ public class FilesRecursive {
         listFilesRecursive(rootCatalog);
     }
 
-    private static void listFilesRecursive(File directory) {
-         File[] listFiles = directory.listFiles();
-
-         if (listFiles != null) {
-            for (File item : listFiles) {
-                System.out.println(item.getName());
-                if (item.isDirectory()) {
+    private static void listFilesRecursive(File directory){
+        File[] files = directory.listFiles();
+        if(files != null){
+            for(var item : files){
+                if(item.isDirectory()){
+                    System.out.println("Directory " + item.getName());
                     listFilesRecursive(item);
                 }
-
+                else{
+                    System.out.println("  File " + item.getName());
+                }
             }
         }
 
