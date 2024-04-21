@@ -1,12 +1,14 @@
 package com.urize.webapp.model;
 
+import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class Company {
+public class Company implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final Link link;
     private final List<Period> periods = new ArrayList<>();
 
