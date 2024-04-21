@@ -1,5 +1,4 @@
 import com.urize.webapp.model.Resume;
-import com.urize.webapp.storage.ResumeTestData;
 import com.urize.webapp.storage.SortedArrayStorage;
 import com.urize.webapp.storage.Storage;
 

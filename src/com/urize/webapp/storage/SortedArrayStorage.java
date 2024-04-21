@@ -3,9 +3,7 @@ package com.urize.webapp.storage;
 import com.urize.webapp.model.Resume;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
     private final static Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getUuid);

@@ -1,6 +1,7 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageException;
+
 import com.urize.webapp.model.Resume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

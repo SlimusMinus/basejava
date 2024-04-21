@@ -1,3 +1,4 @@
+
 package com.urize.webapp.model;
 
 import java.util.Map;
