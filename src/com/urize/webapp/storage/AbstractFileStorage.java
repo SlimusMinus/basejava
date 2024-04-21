@@ -39,11 +39,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(File file) {
-        if (!file.delete()) {
-            throw new StorageException("File isn't must be deleted", file.getName());
-        } else {
-            file.delete();
-        }
+        file.delete();
     }
 
     @Override
@@ -76,7 +72,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doGetAll() {
-        File[] files = getAllFilesFromDirectory();
+        File[] files = getAllDirectoryFiles();
 
         return Arrays.stream(files).
                 map(this::doGet).
@@ -85,7 +81,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        File[] listFiles = getAllFilesFromDirectory();
+        File[] listFiles = getAllDirectoryFiles();
         for (File file : listFiles) {
             doDelete(file);
         }
@@ -93,10 +89,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        return getAllFilesFromDirectory().length;
+        return getAllDirectoryFiles().length;
     }
 
-    private File[] getAllFilesFromDirectory() {
+    private File[] getAllDirectoryFiles() {
         File[] list = directory.listFiles();
         if (list == null) {
             throw new StorageException("Directory is empty", null);
