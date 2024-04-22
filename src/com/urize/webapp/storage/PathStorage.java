@@ -28,11 +28,9 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     public void clear() {
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(directory.toUri()))) {
-            if (directoryStream != null) {
-                for (Path file : directoryStream) {
-                    doDelete(file);
-                }
+        try(Stream<Path> list = Files.list(directory);) {
+            if (list != null) {
+                list.forEach(this::doDelete);
             }
         } catch (IOException e) {
             throw new StorageException("Deleting file error", null);
@@ -100,7 +98,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected List<Resume> doGetAll() {
         List<Resume> list;
-        try (Stream<Path> paths = Files.walk(directory)) {
+        try (Stream<Path> paths = Files.list(directory)) {
             list = paths.map(this::doGet).collect(Collectors.toList());
         } catch (IOException e) {
             throw new StorageException("Exception do get all files", null);
