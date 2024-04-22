@@ -1,20 +1,17 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageException;
-
 import com.urize.webapp.model.Resume;
 
 import java.io.*;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
-    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
+    private File directory;
 
-    protected abstract Resume doRead(InputStream is) throws IOException;
-    private final File directory;
+    private ObjectStreamStorage storage = new ObjectStreamStorage();
 
     protected AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
@@ -28,8 +25,36 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
+    public void clear() {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                doDelete(file);
+            }
+        }
+    }
+
+    @Override
+    public int size() {
+        String[] list = directory.list();
+        if (list == null) {
+            throw new StorageException("Directory read error", null);
+        }
+        return list.length;
+    }
+
+    @Override
     protected File getSearchKey(String uuid) {
         return new File(directory, uuid);
+    }
+
+    @Override
+    protected void doUpdate(File file, Resume r) {
+        try {
+            storage.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
+        } catch (IOException e) {
+            throw new StorageException("File write error", r.getUuid());
+        }
     }
 
     @Override
@@ -38,64 +63,40 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void doDelete(File file) {
-        file.delete();
-    }
-
-    @Override
-    protected void doSave(File file, Resume resume) {
+    protected void doSave(File file, Resume r) {
         try {
             file.createNewFile();
         } catch (IOException e) {
             throw new StorageException("Couldn't create file " + file.getAbsolutePath(), file.getName());
         }
-        doUpdate(file, resume);
+        doUpdate(file, r);
     }
 
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return storage.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName());
         }
     }
 
     @Override
-    protected void doUpdate(File file, Resume resume) {
-        try {
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
-        } catch (IOException e) {
-            throw new StorageException("File write error", resume.getUuid());
+    protected void doDelete(File file) {
+        if (!file.delete()) {
+            throw new StorageException("File delete error", file.getName());
         }
     }
 
     @Override
     protected List<Resume> doGetAll() {
-        File[] files = getAllDirectoryFiles();
-
-        return Arrays.stream(files).
-                map(this::doGet).
-                collect(Collectors.toList());
-    }
-
-    @Override
-    public void clear() {
-        File[] listFiles = getAllDirectoryFiles();
-        for (File file : listFiles) {
-            doDelete(file);
+        File[] files = directory.listFiles();
+        if (files == null) {
+            throw new StorageException("Directory read error", null);
         }
-    }
-
-    @Override
-    public int size() {
-        return getAllDirectoryFiles().length;
-    }
-
-    private File[] getAllDirectoryFiles() {
-        File[] list = directory.listFiles();
-        if (list == null) {
-            throw new StorageException("Directory is empty", null);
+        List<Resume> list = new ArrayList<>(files.length);
+        for (File file : files) {
+            list.add(doGet(file));
         }
         return list;
     }

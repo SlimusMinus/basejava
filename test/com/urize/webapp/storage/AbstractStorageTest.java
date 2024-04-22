@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = new File("D:\\Working\\Ultimate_Project\\basejava\\storage");
+   // protected static final String DIR = "D:\\Working\\Ultimate_Project\\basejava\\storage";
 
     final Storage storage;
     private final static String UUID1 = "uuid1";
@@ -27,7 +28,6 @@ public abstract class AbstractStorageTest {
     private final Resume resume3 = new Resume(UUID2, "Tom");
     private final Resume resume2 = new Resume(UUID3,"Tim");
     private final Resume resume4 = new Resume(UUID_NOT_EXIST, "Bill");
-    private final Resume resume5 = new Resume(UUID1, "Tom");
     private final List<Resume> emptyArray = new ArrayList<>();
     private final  List<Resume> expected = Arrays.asList(resume1, resume2, resume3);
 

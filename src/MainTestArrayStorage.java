@@ -2,10 +2,12 @@ import com.urize.webapp.model.Resume;
 import com.urize.webapp.storage.SortedArrayStorage;
 import com.urize.webapp.storage.Storage;
 
+import java.io.*;
+
 /**
  * Test for your com.urize.webapp.storage.simpleStorage.ArrayStorage implementation
  */
-public class MainTestArrayStorage{
+public class MainTestArrayStorage implements Serializable {
     private static final Storage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
@@ -35,6 +37,7 @@ public class MainTestArrayStorage{
         printAll();
 
         System.out.println("Size: " + ARRAY_STORAGE.size());
+
 
     }
 
