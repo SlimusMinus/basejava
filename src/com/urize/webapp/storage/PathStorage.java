@@ -8,18 +8,18 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
-    private final ObjectStreamStorage storage = new ObjectStreamStorage();
+    private final SerializableMethods storage;
 
-    protected AbstractPathStorage(String dir) {
+    public PathStorage(String dir, SerializableMethods storage) {
         directory = Paths.get(dir);
+        this.storage = storage;
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + " is not directory or is not writable");
@@ -99,9 +99,9 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> doGetAll() {
-        List<Resume> list = new ArrayList<>();
+        List<Resume> list;
         try (Stream<Path> paths = Files.walk(directory)) {
-            paths.map(this::doGet).forEach(list::add);
+            list = paths.map(this::doGet).collect(Collectors.toList());
         } catch (IOException e) {
             throw new StorageException("Exception do get all files", null);
         }

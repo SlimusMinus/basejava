@@ -5,8 +5,8 @@ import com.urize.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage implements SerializableInterface {
-        
+public class SerializableMethods implements SerializableInterface {
+
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
