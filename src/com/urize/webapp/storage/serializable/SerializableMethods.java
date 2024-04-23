@@ -1,4 +1,4 @@
-package com.urize.webapp.storage;
+package com.urize.webapp.storage.serializable;
 
 import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.model.Resume;

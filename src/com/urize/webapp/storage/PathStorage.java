@@ -2,9 +2,9 @@ package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.model.Resume;
+import com.urize.webapp.storage.serializable.SerializableMethods;
 
 import java.io.*;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,24 +28,12 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     public void clear() {
-        try(Stream<Path> list = Files.list(directory);) {
-            if (list != null) {
-                list.forEach(this::doDelete);
-            }
-        } catch (IOException e) {
-            throw new StorageException("Deleting file error", null);
-        }
+        Objects.requireNonNull(getFilesList()).forEach(this::doDelete);
     }
 
     @Override
     public int size() {
-        final long count;
-        try {
-            count = Files.list(directory).count();
-        } catch (IOException e) {
-            throw new StorageException("Directory read error", null);
-        }
-        return (int) count;
+       return (int) Objects.requireNonNull(getFilesList()).count();
     }
 
     @Override
@@ -97,14 +85,17 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> doGetAll() {
-        List<Resume> list;
-        try (Stream<Path> paths = Files.list(directory)) {
-            list = paths.map(this::doGet).collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new StorageException("Exception do get all files", null);
-        }
-        return list;
+        return Objects.requireNonNull(getFilesList()).map(this::doGet).collect(Collectors.toList());
     }
 
-
+    private Stream<Path> getFilesList() {
+        try {
+            if (!isExisting(directory)) {
+                return null;
+            }
+            return Files.list(directory);
+        } catch (IOException e) {
+            throw new StorageException("Directory read error", e.getMessage());
+        }
+    }
 }

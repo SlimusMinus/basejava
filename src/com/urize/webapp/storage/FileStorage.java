@@ -2,8 +2,10 @@ package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.model.Resume;
+import com.urize.webapp.storage.serializable.SerializableMethods;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +28,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        File[] files = directory.listFiles();
+        File[] files = returnFiles();
         if (files != null) {
             for (File file : files) {
                 doDelete(file);
@@ -36,11 +38,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        String[] list = directory.list();
-        if (list == null) {
-            throw new StorageException("Directory read error", null);
-        }
-        return list.length;
+        return returnFiles().length;
     }
 
     @Override
@@ -90,15 +88,23 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doGetAll() {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory read error", null);
-        }
+        File[] files = returnFiles();
         List<Resume> list = new ArrayList<>(files.length);
         for (File file : files) {
             list.add(doGet(file));
         }
         return list;
+    }
+
+    private File[] returnFiles() {
+        try {
+            if (!isExisting(directory)) {
+                return null;
+            }
+            return directory.listFiles();
+        } catch (SecurityException e) {
+            throw new StorageException("Directory read error", e.getMessage());
+        }
     }
 
 
