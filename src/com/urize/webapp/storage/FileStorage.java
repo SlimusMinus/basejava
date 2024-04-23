@@ -5,7 +5,6 @@ import com.urize.webapp.model.Resume;
 import com.urize.webapp.storage.serializable.SerializableMethods;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +27,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        File[] files = returnFiles();
+        File[] files = getFiles();
         if (files != null) {
             for (File file : files) {
                 doDelete(file);
@@ -38,7 +37,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        return returnFiles().length;
+        return getFiles().length;
     }
 
     @Override
@@ -88,7 +87,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doGetAll() {
-        File[] files = returnFiles();
+        File[] files = getFiles();
         List<Resume> list = new ArrayList<>(files.length);
         for (File file : files) {
             list.add(doGet(file));
@@ -96,15 +95,11 @@ public class FileStorage extends AbstractStorage<File> {
         return list;
     }
 
-    private File[] returnFiles() {
-        try {
-            if (!isExisting(directory)) {
-                return null;
-            }
-            return directory.listFiles();
-        } catch (SecurityException e) {
-            throw new StorageException("Directory read error", e.getMessage());
+    private File[] getFiles() {
+        if (!isExisting(directory)) {
+            return null;
         }
+        return directory.listFiles();
     }
 
 
