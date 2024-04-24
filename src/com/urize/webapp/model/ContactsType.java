@@ -1,5 +1,8 @@
 package com.urize.webapp.model;
 
+import lombok.Getter;
+
+@Getter
 public enum ContactsType {
     PHONE("Телефон"),
     SKYPE("Skype"),
@@ -9,10 +12,6 @@ public enum ContactsType {
     STACKOVERFLOW ("Профиль Stackoverflow"),
     HOMEPAGE("Домашняя страница");
     private final String title;
-
-    public String getTitle() {
-        return title;
-    }
 
     ContactsType(String title) {
         this.title = title;

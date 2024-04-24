@@ -1,18 +1,21 @@
 package com.urize.webapp.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.List;
 import java.util.Objects;
-
+@Getter
+@NoArgsConstructor
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CompanySection extends AbstractSection {
-    private final List<Company> list;
+    private List<Company> list;
 
     public CompanySection(List<Company> list) {
         Objects.requireNonNull(list, "company must be not null");
         this.list = list;
-    }
-
-    public List<Company> getList() {
-        return list;
     }
 
     @Override

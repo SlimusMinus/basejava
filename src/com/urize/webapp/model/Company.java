@@ -1,28 +1,27 @@
 package com.urize.webapp.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
+@XmlAccessorType(XmlAccessType.FIELD)
+@NoArgsConstructor
+@Getter
 public class Company implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final Link link;
+    private Link link;
     private final List<Period> periods = new ArrayList<>();
 
     public Company(String name, String url, Period... periods) {
         this.link = new Link(name, url);
         Arrays.asList(periods);
-    }
-
-    public Link getLink() {
-        return link;
-    }
-
-    public List<Period> getPeriods() {
-        return periods;
     }
 
     @Override
@@ -44,34 +43,20 @@ public class Company implements Serializable {
                 "link = " + link +
                 ", periods=" + periods;
     }
-
-    public static class Period {
-        private final YearMonth startDate;
-        private final YearMonth endDate;
-        private final String title;
-        private final String description;
+    @Getter
+    @NoArgsConstructor
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Period implements Serializable {
+        private YearMonth startDate;
+        private YearMonth endDate;
+        private String title;
+        private String description;
 
         public Period(YearMonth startDate, YearMonth endDate, String title, String description) {
             this.startDate = startDate;
             this.endDate = endDate;
             this.title = title;
             this.description = description;
-        }
-
-        public YearMonth getStartDate() {
-            return startDate;
-        }
-
-        public YearMonth getEndDate() {
-            return endDate;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getDescription() {
-            return description;
         }
 
         @Override

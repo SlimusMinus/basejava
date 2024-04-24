@@ -1,19 +1,21 @@
 package com.urize.webapp.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-
+@Getter
+@NoArgsConstructor
 public class TextSection extends AbstractSection implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
-    private final String section;
+    private String section;
 
     public TextSection(String section) {
         Objects.requireNonNull(section, "section must be not null");
         this.section = section;
-    }
-
-    public String getSection() {
-        return section;
     }
 
     @Override

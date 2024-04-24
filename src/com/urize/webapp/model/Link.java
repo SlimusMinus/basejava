@@ -1,12 +1,19 @@
 package com.urize.webapp.model;
 
+import lombok.NoArgsConstructor;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-
+@XmlAccessorType(XmlAccessType.FIELD)
+@NoArgsConstructor
 public class Link implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
-    private final String name;
-    private final String url;
+    private String name;
+    private String url;
 
     public Link(String name, String url) {
         this.name = name;

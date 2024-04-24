@@ -1,5 +1,8 @@
 package com.urize.webapp.model;
 
+import lombok.Getter;
+
+@Getter
 public enum SectionType {
     PERSONAL("Личные качества"),
     OBJECTIVE("Позиция"),
@@ -14,7 +17,4 @@ public enum SectionType {
         this.title = title;
     }
 
-    public String getTitle() {
-        return title;
-    }
 }

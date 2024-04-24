@@ -1,17 +1,30 @@
 
 package com.urize.webapp.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@NoArgsConstructor
+@Getter
 public class Resume implements Comparable<Resume>, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    private final String uuid;
+    private String uuid;
 
-    private final String fullName;
+    private String fullName;
 
     private Map<ContactsType, String> contacts;
 
@@ -34,36 +47,12 @@ public class Resume implements Comparable<Resume>, Serializable {
         this.fullName = fullName;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public Map<ContactsType, String> getContacts() {
-        return contacts;
-    }
-
-    public Map<SectionType, AbstractSection> getSections() {
-        return sections;
-    }
-
     public void setContacts(Map<ContactsType, String> contacts) {
         this.contacts = contacts;
     }
 
     public void setSections(Map<SectionType, AbstractSection> sections) {
         this.sections = sections;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getContacts(ContactsType type) {
-        return contacts.get(type);
-    }
-
-    public AbstractSection getSections(SectionType type) {
-        return sections.get(type);
     }
 
     @Override
