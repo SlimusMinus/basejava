@@ -1,11 +1,9 @@
 package com.urize.webapp.model;
 
 import com.urize.webapp.util.LocalDateAdapter;
-import com.urize.webapp.util.YearMonthAdapter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.swing.text.Position;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -55,7 +53,9 @@ public class Company implements Serializable {
     @NoArgsConstructor
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Period implements Serializable {
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private YearMonth startDate;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private YearMonth endDate;
         private String title;
         private String description;
