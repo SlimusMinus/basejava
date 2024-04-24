@@ -1,10 +1,14 @@
 package com.urize.webapp.model;
 
+import com.urize.webapp.util.LocalDateAdapter;
+import com.urize.webapp.util.YearMonthAdapter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.swing.text.Position;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -17,11 +21,15 @@ import java.util.Objects;
 public class Company implements Serializable {
     private static final long serialVersionUID = 1L;
     private Link link;
-    private final List<Period> periods = new ArrayList<>();
+    private List<Period> periods = new ArrayList<>();
 
     public Company(String name, String url, Period... periods) {
-        this.link = new Link(name, url);
-        Arrays.asList(periods);
+        this(new Link(name, url), Arrays.asList(periods));
+    }
+
+    public Company(Link link, List<Period> periods) {
+        this.link = link;
+        this.periods = periods;
     }
 
     @Override

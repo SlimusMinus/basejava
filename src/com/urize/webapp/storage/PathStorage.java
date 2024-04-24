@@ -68,7 +68,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return storage.doRead(new BufferedInputStream(new FileInputStream(String.valueOf(path))));
+            return storage.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("File read error", path.getFileName().toString());
         }

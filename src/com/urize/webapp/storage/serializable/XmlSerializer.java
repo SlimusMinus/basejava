@@ -1,3 +1,4 @@
+
 package com.urize.webapp.storage.serializable;
 
 import com.urize.webapp.model.*;
