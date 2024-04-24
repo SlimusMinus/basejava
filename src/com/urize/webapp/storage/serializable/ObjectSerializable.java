@@ -5,7 +5,7 @@ import com.urize.webapp.model.Resume;
 
 import java.io.*;
 
-public class SerializableMethods implements SerializableInterface {
+public class ObjectSerializable implements SerializableInterface {
 
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {

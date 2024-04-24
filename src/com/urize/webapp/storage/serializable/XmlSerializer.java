@@ -6,10 +6,10 @@ import com.urize.webapp.util.XmlParser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class XmlStreamSerializer implements SerializableInterface{
+public class XmlSerializer implements SerializableInterface{
     private XmlParser xmlParser;
 
-    public XmlStreamSerializer() {
+    public XmlSerializer() {
         xmlParser = new XmlParser(
                 Resume.class, Company.class, Link.class,
                 CompanySection.class, TextSection.class, ListSection.class, Company.Period.class);
