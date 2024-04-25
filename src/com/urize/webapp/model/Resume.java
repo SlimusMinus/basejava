@@ -46,6 +46,12 @@ public class Resume implements Comparable<Resume>, Serializable {
         this.uuid = uuid;
         this.fullName = fullName;
     }
+    public void addContacts(ContactsType key, String value){
+        contacts.put(key, value);
+    }
+    public void addSections(SectionType key, AbstractSection value){
+        sections.put(key, value);
+    }
 
     public void setContacts(Map<ContactsType, String> contacts) {
         this.contacts = contacts;

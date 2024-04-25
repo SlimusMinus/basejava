@@ -1,5 +1,6 @@
 package com.urize.webapp.model;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
+@Getter
 public class Link implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
