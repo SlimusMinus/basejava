@@ -13,41 +13,40 @@ public class DataSerializer implements SerializableInterface {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
 
-            if(r.getContacts() != null){
-                Map<ContactsType, String> contacts = r.getContacts();
-                writeCollection(dos, contacts.entrySet(), entry -> {
-                    dos.writeUTF(entry.getKey().name());
-                    dos.writeUTF(entry.getValue());
-                });
-            }
 
-            if (r.getSections() != null) {
-                writeCollection(dos, r.getSections().entrySet(), entry -> {
-                    SectionType type = entry.getKey();
-                    AbstractSection section = entry.getValue();
-                    dos.writeUTF(type.name());
-                    switch (type) {
-                        case PERSONAL, OBJECTIVE:
-                            dos.writeUTF(((TextSection) section).getSection());
-                            break;
-                        case ACHIEVEMENT, QUALIFICATIONS:
-                            writeCollection(dos, ((ListSection) section).getList(), dos::writeUTF);
-                            break;
-                        case EXPERIENCE, EDUCATION:
-                            writeCollection(dos, ((CompanySection) section).getList(), org -> {
-                                dos.writeUTF(org.getLink().getName());
-                                dos.writeUTF(org.getLink().getUrl());
-                                writeCollection(dos, org.getPeriods(), position -> {
-                                    writeYearMonth(dos, position.getStartDate());
-                                    writeYearMonth(dos, position.getEndDate());
-                                    dos.writeUTF(position.getTitle());
-                                    dos.writeUTF(position.getDescription());
-                                });
+            Map<ContactsType, String> contacts = r.getContacts();
+            writeCollection(dos, contacts.entrySet(), entry -> {
+                dos.writeUTF(entry.getKey().name());
+                dos.writeUTF(entry.getValue());
+            });
+
+
+            writeCollection(dos, r.getSections().entrySet(), entry -> {
+                SectionType type = entry.getKey();
+                AbstractSection section = entry.getValue();
+                dos.writeUTF(type.name());
+                switch (type) {
+                    case PERSONAL, OBJECTIVE:
+                        dos.writeUTF(((TextSection) section).getSection());
+                        break;
+                    case ACHIEVEMENT, QUALIFICATIONS:
+                        writeCollection(dos, ((ListSection) section).getList(), dos::writeUTF);
+                        break;
+                    case EXPERIENCE, EDUCATION:
+                        writeCollection(dos, ((CompanySection) section).getList(), org -> {
+                            dos.writeUTF(org.getLink().getName());
+                            dos.writeUTF(org.getLink().getUrl());
+                            writeCollection(dos, org.getPeriods(), position -> {
+                                writeYearMonth(dos, position.getStartDate());
+                                writeYearMonth(dos, position.getEndDate());
+                                dos.writeUTF(position.getTitle());
+                                dos.writeUTF(position.getDescription());
                             });
-                            break;
-                    }
-                });
-            }
+                        });
+                        break;
+                }
+            });
+
         }
 
     }

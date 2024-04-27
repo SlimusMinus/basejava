@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -26,9 +27,9 @@ public class Resume implements Comparable<Resume>, Serializable {
 
     private String fullName;
 
-    private Map<ContactsType, String> contacts;
+    private Map<ContactsType, String> contacts = new EnumMap<>(ContactsType.class);
 
-    private Map<SectionType, AbstractSection> sections;
+    private Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName, Map<ContactsType, String> contacts, Map<SectionType, AbstractSection> sections) {
         this.uuid = UUID.randomUUID().toString();
