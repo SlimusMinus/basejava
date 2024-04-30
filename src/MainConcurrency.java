@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class MainConcurrency {
     public static final int THREADS_NUMBER = 10000;
@@ -18,7 +20,7 @@ public class MainConcurrency {
         };
         thread0.start();
 
-        Thread th = new Thread(()-> System.out.println("Hel lo man"));
+        Thread th = new Thread(() -> System.out.println("Hel lo man"));
 
         new Thread(new Runnable() {
 
@@ -34,11 +36,11 @@ public class MainConcurrency {
             }
 
         }).start();
-
         System.out.println(thread0.getState());
 
         final MainConcurrency mainConcurrency = new MainConcurrency();
-        List<Thread> threads = new ArrayList<>(THREADS_NUMBER);
+
+        CountDownLatch countDownLatch = new CountDownLatch(THREADS_NUMBER);
 
         for (int i = 0; i < THREADS_NUMBER; i++) {
             Thread thread = new Thread(() -> {
@@ -47,26 +49,14 @@ public class MainConcurrency {
                 }
             });
             thread.start();
-            threads.add(thread);
+            countDownLatch.countDown();
         }
 
-        threads.forEach(t -> {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        countDownLatch.await(10, TimeUnit.SECONDS);
         System.out.println(mainConcurrency.counter);
     }
 
     private synchronized void inc() {
-//        synchronized (this) {
-//        synchronized (MainConcurrency.class) {
         counter++;
-//                wait();
-//                readFile
-//                ...
-//        }
     }
 }
