@@ -15,12 +15,12 @@ public class StreamTasks {
     }
 
     private static int minValue(int[] values) {
-        return Arrays.stream(values).distinct().sorted().reduce(0, (acc, sum)-> acc*10+sum);
+        return Arrays.stream(values).distinct().sorted().reduce(0, (acc, sum) -> acc * 10 + sum);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
         Map<Boolean, List<Integer>> map = integers.stream()
-                .collect(partitioningBy(num->num%2==0, Collectors.toList()));
+                .collect(partitioningBy(num -> num % 2 == 0, Collectors.toList()));
         return map.get(map.get(false).size() % 2 != 0);
     }
 
