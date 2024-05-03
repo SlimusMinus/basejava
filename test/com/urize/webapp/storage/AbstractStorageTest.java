@@ -1,5 +1,7 @@
 package com.urize.webapp.storage;
 
+
+import com.urize.webapp.Config;
 import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.*;
@@ -16,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("D:\\Working\\Ultimate_Project\\basejava\\storage");
+    protected static final File STORAGE_DIR = Config.getInstance().getStorageDir();
 
     final Storage storage;
     private final static String UUID1 = "uuid1";
