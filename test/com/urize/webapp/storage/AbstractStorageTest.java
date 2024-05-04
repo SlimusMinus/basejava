@@ -37,7 +37,7 @@ public abstract class AbstractStorageTest {
     }
 
     static {
-        Map<ContactsType, String> contacts = new HashMap<>();
+        /*Map<ContactsType, String> contacts = new HashMap<>();
         contacts.put(ContactsType.PHONE, "89874561252");
         contacts.put(ContactsType.SKYPE, "skype");
         contacts.put(ContactsType.MAIL, "123@gmail.com");
@@ -61,7 +61,7 @@ public abstract class AbstractStorageTest {
                 new Company("University", "http://university.ru",
                         new Company.Period(YearMonth.of(2002, 1), YearMonth.of(2003, 2), "student", "study"),
                         new Company.Period(YearMonth.of(2003, 2), YearMonth.of(2004, 4), "aspirant", "teacher")))));
-        resume1.setSections(sections);
+        resume1.setSections(sections);*/
     }
 
 
