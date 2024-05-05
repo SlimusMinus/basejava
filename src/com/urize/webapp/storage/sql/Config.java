@@ -1,4 +1,4 @@
-package com.urize.webapp;
+package com.urize.webapp.storage.sql;
 
 import com.urize.webapp.storage.SQLStorage;
 import com.urize.webapp.storage.Storage;
@@ -17,14 +17,15 @@ public class Config {
 
     private final Storage storage;
 
-    public static Config getInstance(){
+    public static Config getInstance() {
         return INSTANCE;
     }
-    private Config(){
-        try(InputStream is = new FileInputStream(STORAGE)){
+
+    private Config() {
+        try (InputStream is = new FileInputStream(STORAGE)) {
             properties.load(is);
             storageDir = new File(properties.getProperty("storage.dir"));
-            storage = new SQLStorage(properties.getProperty("db.url"), properties.getProperty("db.user"),properties.getProperty("db.password"));
+            storage = new SQLStorage(properties.getProperty("db.url"), properties.getProperty("db.user"), properties.getProperty("db.password"));
 
         } catch (IOException e) {
             throw new RuntimeException(e);

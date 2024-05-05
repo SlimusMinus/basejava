@@ -1,7 +1,7 @@
 package com.urize.webapp.storage;
 
 
-import com.urize.webapp.Config;
+import com.urize.webapp.storage.sql.Config;
 import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.*;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.time.YearMonth;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
