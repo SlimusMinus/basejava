@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.time.YearMonth;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +37,7 @@ public abstract class AbstractStorageTest {
     }
 
     static {
-        /*Map<ContactsType, String> contacts = new HashMap<>();
+        Map<ContactsType, String> contacts = new HashMap<>();
         contacts.put(ContactsType.PHONE, "89874561252");
         contacts.put(ContactsType.SKYPE, "skype");
         contacts.put(ContactsType.MAIL, "123@gmail.com");
@@ -45,7 +46,7 @@ public abstract class AbstractStorageTest {
         contacts.put(ContactsType.GITHUB, "GITHUB");
         resume1.setContacts(contacts);
 
-        Map<SectionType, AbstractSection> sections = new HashMap<>();
+       /* Map<SectionType, AbstractSection> sections = new HashMap<>();
         sections.put(SectionType.OBJECTIVE, new TextSection("position"));
         sections.put(SectionType.PERSONAL, new TextSection("personal"));
         sections.put(SectionType.ACHIEVEMENT, new ListSection(Arrays.asList("One", "Two")));

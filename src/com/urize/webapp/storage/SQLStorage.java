@@ -1,6 +1,8 @@
 package com.urize.webapp.storage;
 
+import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
+import com.urize.webapp.model.ContactsType;
 import com.urize.webapp.model.Resume;
 import com.urize.webapp.sql.SQLHelper;
 
@@ -8,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SQLStorage implements Storage {
 
@@ -30,18 +33,38 @@ public class SQLStorage implements Storage {
             statement.execute();
             return null;
         });
+        for (Map.Entry<ContactsType, String> e : r.getContacts().entrySet()) {
+            sqlHelper.<Void>execute("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", ps -> {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, e.getKey().name());
+                ps.setString(3, e.getValue());
+                return null;
+            });
+        }
     }
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.execute("select * from resume where uuid = (?)", statement -> {
-            statement.setString(1, uuid);
-            ResultSet resultSet = statement.executeQuery();
-            if (!resultSet.next()) {
-                throw new StorageNotFoundException(uuid);
-            }
-            return new Resume(uuid, resultSet.getString("full_name"));
-        });
+        return sqlHelper.execute("" +
+                        "    SELECT * FROM resume r " +
+                        " LEFT JOIN contact c " +
+                        "        ON r.uuid = c.resume_uuid " +
+                        "     WHERE r.uuid =? ",
+                ps -> {
+                    ps.setString(1, uuid);
+                    ResultSet rs = ps.executeQuery();
+                    if (!rs.next()) {
+                        throw new ResumeExistStorageException(uuid);
+                    }
+                    Resume r = new Resume(uuid, rs.getString("full_name"));
+                    do {
+                        String value = rs.getString("value");
+                        ContactsType type = ContactsType.valueOf(rs.getString("type"));
+                        r.addContacts(type, value);
+                    } while (rs.next());
+
+                    return r;
+                });
     }
 
     @Override
