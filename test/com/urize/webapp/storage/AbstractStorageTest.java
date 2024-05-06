@@ -1,7 +1,7 @@
 package com.urize.webapp.storage;
 
 
-import com.urize.webapp.storage.sql.Config;
+import com.urize.webapp.sql.Config;
 import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.*;

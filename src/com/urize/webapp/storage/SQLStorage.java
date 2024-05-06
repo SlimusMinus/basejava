@@ -2,7 +2,7 @@ package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.Resume;
-import com.urize.webapp.storage.sql.SQLHelper;
+import com.urize.webapp.sql.SQLHelper;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;

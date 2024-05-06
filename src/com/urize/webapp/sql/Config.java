@@ -1,4 +1,4 @@
-package com.urize.webapp.storage.sql;
+package com.urize.webapp.sql;
 
 import com.urize.webapp.storage.SQLStorage;
 import com.urize.webapp.storage.Storage;
