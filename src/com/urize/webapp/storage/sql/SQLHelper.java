@@ -1,6 +1,7 @@
 package com.urize.webapp.storage.sql;
 
 import com.urize.webapp.exception.ResumeExistStorageException;
+import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.util.ConnectionFactory;
 
 import java.sql.Connection;
@@ -23,7 +24,11 @@ public class SQLHelper {
              PreparedStatement statement = connection.prepareStatement(SQL)) {
             return executorInterface.execute(statement);
         } catch (SQLException e) {
-            throw new ResumeExistStorageException(e.getMessage());
+            if (e.getSQLState().equals("23505")){
+                throw new ResumeExistStorageException(null);
+            } else {
+                throw new StorageException(e.getMessage(), "uuid");
+            }
         }
     }
 }

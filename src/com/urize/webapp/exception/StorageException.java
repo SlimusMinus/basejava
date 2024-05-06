@@ -1,5 +1,8 @@
 package com.urize.webapp.exception;
 
+import lombok.Getter;
+
+@Getter
 public class StorageException extends RuntimeException {
     private final String uuid;
 
@@ -8,7 +11,4 @@ public class StorageException extends RuntimeException {
         this.uuid = uuid;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
 }

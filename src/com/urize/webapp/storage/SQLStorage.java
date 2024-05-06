@@ -19,12 +19,12 @@ public class SQLStorage implements Storage {
 
     @Override
     public void clear() {
-        sqlHelper.execute("DELETE from resume");
+        sqlHelper.execute("delete from resume");
     }
 
     @Override
     public void save(Resume r) {
-        sqlHelper.execute("INSERT INTO resume values (?,?)", statement -> {
+        sqlHelper.execute("insert into resume values (?,?)", statement -> {
             statement.setString(1, r.getUuid());
             statement.setString(2, r.getFullName());
             statement.execute();
@@ -34,7 +34,7 @@ public class SQLStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.execute("SELECT * from resume WHERE uuid = (?)", statement -> {
+        return sqlHelper.execute("select * from resume where uuid = (?)", statement -> {
             statement.setString(1, uuid);
             ResultSet resultSet = statement.executeQuery();
             if (!resultSet.next()) {
@@ -46,7 +46,7 @@ public class SQLStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.execute("DELETE from resume WHERE uuid = ?", statement -> {
+        sqlHelper.execute("delete from resume where uuid = ?", statement -> {
             statement.setString(1, uuid);
             if (statement.executeUpdate() == 0) {
                 throw new StorageNotFoundException(uuid);
@@ -58,7 +58,7 @@ public class SQLStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("SELECT * from resume ORDER BY full_name", statement -> {
+        return sqlHelper.execute("select * from resume order by full_name", statement -> {
             ResultSet resultSet = statement.executeQuery();
             List<Resume> list = new ArrayList<>();
             while (resultSet.next()) {
@@ -70,19 +70,15 @@ public class SQLStorage implements Storage {
 
     @Override
     public int size() {
-        return sqlHelper.execute("SELECT count(*) from resume", statement -> {
-            int count = 0;
+        return sqlHelper.execute("select count(*) from resume", statement -> {
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                count = resultSet.getInt(1);
-            }
-            return count;
+            return resultSet.next() ? resultSet.getInt(1) : 0;
         });
     }
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.execute("UPDATE resume SET full_name = ? where uuid = ?", statement -> {
+        sqlHelper.execute("update resume set full_name = ? where uuid = ?", statement -> {
             statement.setString(1, resume.getFullName());
             statement.setString(2, resume.getUuid());
             if (statement.executeUpdate() == 0) {
