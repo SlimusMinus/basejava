@@ -1,12 +1,12 @@
 package com.urize.webapp.storage;
 
-import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.ContactsType;
 import com.urize.webapp.model.Resume;
 import com.urize.webapp.sql.SQLHelper;
 
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,20 +27,24 @@ public class SQLStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        sqlHelper.execute("insert into resume values (?,?)", statement -> {
-            statement.setString(1, r.getUuid());
-            statement.setString(2, r.getFullName());
-            statement.execute();
-            return null;
-        });
-        for (Map.Entry<ContactsType, String> e : r.getContacts().entrySet()) {
-            sqlHelper.<Void>execute("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", ps -> {
-                ps.setString(1, r.getUuid());
-                ps.setString(2, e.getKey().name());
-                ps.setString(3, e.getValue());
-                return null;
-            });
-        }
+        sqlHelper.transactionalExecute(conn -> {
+                    try (PreparedStatement ps = conn.prepareStatement("INSERT INTO resume (uuid, full_name) VALUES (?,?)")) {
+                        ps.setString(1, r.getUuid());
+                        ps.setString(2, r.getFullName());
+                        ps.execute();
+                    }
+                    try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)")) {
+                        for (Map.Entry<ContactsType, String> e : r.getContacts().entrySet()) {
+                            ps.setString(1, r.getUuid());
+                            ps.setString(2, e.getKey().getTitle());
+                            ps.setString(3, e.getValue());
+                            ps.addBatch();
+                        }
+                        ps.executeBatch();
+                    }
+                    return null;
+                }
+        );
     }
 
     @Override
@@ -54,7 +58,7 @@ public class SQLStorage implements Storage {
                     ps.setString(1, uuid);
                     ResultSet rs = ps.executeQuery();
                     if (!rs.next()) {
-                        throw new ResumeExistStorageException(uuid);
+                        throw new StorageNotFoundException(uuid);
                     }
                     Resume r = new Resume(uuid, rs.getString("full_name"));
                     do {

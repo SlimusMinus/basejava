@@ -15,20 +15,32 @@ public class SQLHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public void execute(String SQL) {
-        execute(SQL, PreparedStatement::execute);
+    public void execute(String sql) {
+        execute(sql, PreparedStatement::execute);
     }
 
-    public <T> T execute(String SQL, ExecutorInterface<T> executorInterface) {
-        try (Connection connection = connectionFactory.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL)) {
-            return executorInterface.execute(statement);
+    public <T> T execute(String sql, ExecutorInterface<T> executor) {
+        try (Connection conn = connectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            return executor.execute(ps);
         } catch (SQLException e) {
-            if (e.getSQLState().equals("23505")){
-                throw new ResumeExistStorageException(null);
-            } else {
-                throw new StorageException(e.getMessage(), "uuid");
+            throw ExceptionUtil.convertException(e);
+        }
+    }
+
+    public <T> T transactionalExecute(SqlTransaction<T> executor) {
+        try (Connection conn = connectionFactory.getConnection()) {
+            try {
+                conn.setAutoCommit(false);
+                T res = executor.execute(conn);
+                conn.commit();
+                return res;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw ExceptionUtil.convertException(e);
             }
+        } catch (SQLException e) {
+            throw new StorageException(e.getMessage(), "uid");
         }
     }
 }

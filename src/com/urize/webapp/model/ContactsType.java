@@ -16,4 +16,6 @@ public enum ContactsType {
     ContactsType(String title) {
         this.title = title;
     }
+
+
 }

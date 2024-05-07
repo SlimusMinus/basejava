@@ -6,7 +6,7 @@ create table public.resume
 
 create table public.contact
 (
-    id          serial primary key,
+    id          serial,
     resume_uuid text not null references public.resume (uuid) on delete cascade,
     type        text not null,
     value       text not null
