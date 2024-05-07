@@ -47,7 +47,12 @@ public class SQLStorage implements Storage {
                     throw new StorageNotFoundException(resume.getUuid());
                 }
             }
+            try (PreparedStatement ps = statement.prepareStatement("delete from contact where resume_uuid = ?")) {
+                ps.setString(1, resume.getUuid());
+                ps.executeUpdate();
+            }
             insertContacts(resume, statement);
+
             return null;
         });
     }
