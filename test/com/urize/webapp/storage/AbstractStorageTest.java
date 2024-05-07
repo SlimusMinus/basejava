@@ -37,13 +37,14 @@ public abstract class AbstractStorageTest {
     }
 
     static {
-        Map<ContactsType, String> contacts = new HashMap<>();
+        Map<ContactsType, String> contacts = new EnumMap<>(ContactsType.class);
         contacts.put(ContactsType.PHONE, "89874561252");
         contacts.put(ContactsType.SKYPE, "skype");
         contacts.put(ContactsType.MAIL, "123@gmail.com");
-        contacts.put(ContactsType.STACKOVERFLOW, "STACKOVERFLOW");
         contacts.put(ContactsType.LINKEDIN, "LINKEDIN");
         contacts.put(ContactsType.GITHUB, "GITHUB");
+        contacts.put(ContactsType.STACKOVERFLOW, "STACKOVERFLOW");
+        contacts.put(ContactsType.HOMEPAGE, "www.myPage.com");
         resume1.setContacts(contacts);
 
        /* Map<SectionType, AbstractSection> sections = new HashMap<>();
