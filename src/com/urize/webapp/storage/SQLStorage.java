@@ -8,6 +8,7 @@ import com.urize.webapp.sql.SQLHelper;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SQLStorage implements Storage {
 
@@ -100,10 +101,9 @@ public class SQLStorage implements Storage {
             list.forEach(item -> contactsList.stream()
                     .filter(contacts -> item.getUuid().equals(contacts.getResume_uuid()))
                     .forEach(contacts -> item.addContacts(contacts.getContactsType(), contacts.getValue())));
-            return list;
+            return list.stream().sorted().collect(Collectors.toList());
         });
     }
-
 
     @Override
     public int size() {
