@@ -1,14 +1,13 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageNotFoundException;
+import com.urize.webapp.model.Contacts;
 import com.urize.webapp.model.ContactsType;
 import com.urize.webapp.model.Resume;
 import com.urize.webapp.sql.SQLHelper;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SQLStorage implements Storage {
 
@@ -47,12 +46,16 @@ public class SQLStorage implements Storage {
                     throw new StorageNotFoundException(resume.getUuid());
                 }
             }
-            try (PreparedStatement ps = statement.prepareStatement("delete from contact where resume_uuid = ?")) {
-                ps.setString(1, resume.getUuid());
-                ps.executeUpdate();
-            }
+            deleteContacts(statement, "delete from contact where resume_uuid = ?", resume.getUuid());
             insertContacts(resume, statement);
+            return null;
+        });
+    }
 
+    @Override
+    public void delete(String uuid) {
+        sqlHelper.transactionalExecute(statement -> {
+            deleteContacts(statement, "delete from resume where uuid = ?", uuid);
             return null;
         });
     }
@@ -78,44 +81,29 @@ public class SQLStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("SELECT * FROM resume r " +
-                "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
-                "ORDER BY full_name, uuid", statement -> {
-            ResultSet resultSet = statement.executeQuery();
+        return sqlHelper.transactionalExecute(ps -> {
             List<Resume> list = new ArrayList<>();
-            String currentUuid = null;
-            Resume currentResume = null;
-            while (resultSet.next()) {
-                String uuid = resultSet.getString("uuid");
-                if (!uuid.equals(currentUuid)) {
-                    if (currentResume != null) {
-                        list.add(currentResume);
-                    }
-                    currentUuid = uuid;
-                    currentResume = new Resume(uuid, resultSet.getString("full_name"));
-                }
-                String value = resultSet.getString("value");
-                if (value != null) {
-                    currentResume.addContacts(ContactsType.valueOf(resultSet.getString("type")), value);
+            List<Contacts> contactsList = new ArrayList<>();
+            try (PreparedStatement statement = ps.prepareStatement("SELECT * from resume")) {
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    list.add(new Resume(resultSet.getString("uuid"), resultSet.getString("full_name")));
                 }
             }
-            if (currentResume != null) {
-                list.add(currentResume);
+            try (PreparedStatement statement = ps.prepareStatement("SELECT * from contact")) {
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    contactsList.add(new Contacts(resultSet.getString("resume_uuid"),
+                            ContactsType.valueOf(resultSet.getString("type")), resultSet.getString("value")));
+                }
             }
+            list.forEach(item -> contactsList.stream()
+                    .filter(contacts -> item.getUuid().equals(contacts.getResume_uuid()))
+                    .forEach(contacts -> item.addContacts(contacts.getContactsType(), contacts.getValue())));
             return list;
         });
     }
 
-    @Override
-    public void delete(String uuid) {
-        sqlHelper.execute("delete from resume where uuid = ?", statement -> {
-            statement.setString(1, uuid);
-            if (statement.executeUpdate() == 0) {
-                throw new StorageNotFoundException(uuid);
-            }
-            return null;
-        });
-    }
 
     @Override
     public int size() {
@@ -134,6 +122,15 @@ public class SQLStorage implements Storage {
                 ps.addBatch();
             }
             ps.executeBatch();
+        }
+    }
+
+    private static void deleteContacts(Connection statement, String sql, String resume) throws SQLException {
+        try (PreparedStatement ps = statement.prepareStatement(sql)) {
+            ps.setString(1, resume);
+            if (ps.executeUpdate() == 0) {
+                throw new StorageNotFoundException(resume);
+            }
         }
     }
 
