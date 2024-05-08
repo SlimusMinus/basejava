@@ -47,7 +47,12 @@ public class SQLStorage implements Storage {
                     throw new StorageNotFoundException(resume.getUuid());
                 }
             }
-            deleteContacts(statement, "delete from contact where resume_uuid = ?", resume.getUuid());
+            try (PreparedStatement ps = statement.prepareStatement("delete from contact where resume_uuid = ?")) {
+                ps.setString(1, resume.getUuid());
+                if (ps.executeUpdate() == 0) {
+                    throw new StorageNotFoundException(resume.getUuid());
+                }
+            }
             insertContacts(resume, statement);
             return null;
         });
@@ -55,8 +60,11 @@ public class SQLStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.transactionalExecute(statement -> {
-            deleteContacts(statement, "delete from resume where uuid = ?", uuid);
+        sqlHelper.execute("delete from resume where uuid=?", ps -> {
+            ps.setString(1, uuid);
+            if (ps.executeUpdate() == 0) {
+                throw new StorageNotFoundException(uuid);
+            }
             return null;
         });
     }
@@ -84,23 +92,37 @@ public class SQLStorage implements Storage {
     public List<Resume> getAllSorted() {
         return sqlHelper.transactionalExecute(ps -> {
             List<Resume> list = new ArrayList<>();
-            List<Contacts> contactsList = new ArrayList<>();
+            Map<String, List<Contacts>> contactsMap = new HashMap<>();
+
             try (PreparedStatement statement = ps.prepareStatement("SELECT * from resume")) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    list.add(new Resume(resultSet.getString("uuid"), resultSet.getString("full_name")));
+                    String uuid = resultSet.getString("uuid");
+                    String fullName = resultSet.getString("full_name");
+                    list.add(new Resume(uuid, fullName));
+                    contactsMap.put(uuid, new ArrayList<>());
                 }
             }
+
             try (PreparedStatement statement = ps.prepareStatement("SELECT * from contact")) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
-                    contactsList.add(new Contacts(resultSet.getString("resume_uuid"),
-                            ContactsType.valueOf(resultSet.getString("type")), resultSet.getString("value")));
+                    String resumeUuid = resultSet.getString("resume_uuid");
+                    Contacts contacts = new Contacts(
+                            ContactsType.valueOf(resultSet.getString("type")),
+                            resultSet.getString("value")
+                    );
+                    contactsMap.get(resumeUuid).add(contacts);
                 }
             }
-            list.forEach(item -> contactsList.stream()
-                    .filter(contacts -> item.getUuid().equals(contacts.getResume_uuid()))
-                    .forEach(contacts -> item.addContacts(contacts.getContactsType(), contacts.getValue())));
+
+            list.forEach(item -> {
+                List<Contacts> contactsList = contactsMap.get(item.getUuid());
+                if (contactsList != null) {
+                    contactsList.forEach(contacts -> item.addContacts(contacts.getContactsType(), contacts.getValue()));
+                }
+            });
+
             return list.stream().sorted().collect(Collectors.toList());
         });
     }
@@ -122,15 +144,6 @@ public class SQLStorage implements Storage {
                 ps.addBatch();
             }
             ps.executeBatch();
-        }
-    }
-
-    private static void deleteContacts(Connection statement, String sql, String resume) throws SQLException {
-        try (PreparedStatement ps = statement.prepareStatement(sql)) {
-            ps.setString(1, resume);
-            if (ps.executeUpdate() == 0) {
-                throw new StorageNotFoundException(resume);
-            }
         }
     }
 
