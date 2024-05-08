@@ -78,16 +78,29 @@ public class SQLStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("" +
-                "SELECT * FROM resume r" +
-                "  LEFT JOIN contact c ON r.uuid = c.resume_uuid" +
-                " ORDER BY full_name, uuid", statement -> {
+        return sqlHelper.execute("SELECT * FROM resume r " +
+                "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
+                "ORDER BY full_name, uuid", statement -> {
             ResultSet resultSet = statement.executeQuery();
             List<Resume> list = new ArrayList<>();
+            String currentUuid = null;
+            Resume currentResume = null;
             while (resultSet.next()) {
-                Resume resume = new Resume(resultSet.getString("uuid"), resultSet.getString("full_name"));
-                getContacts(resultSet, resume);
-                list.add(resume);
+                String uuid = resultSet.getString("uuid");
+                if (!uuid.equals(currentUuid)) {
+                    if (currentResume != null) {
+                        list.add(currentResume);
+                    }
+                    currentUuid = uuid;
+                    currentResume = new Resume(uuid, resultSet.getString("full_name"));
+                }
+                String value = resultSet.getString("value");
+                if (value != null) {
+                    currentResume.addContacts(ContactsType.valueOf(resultSet.getString("type")), value);
+                }
+            }
+            if (currentResume != null) {
+                list.add(currentResume);
             }
             return list;
         });
