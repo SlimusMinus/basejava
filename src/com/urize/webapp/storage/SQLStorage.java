@@ -1,14 +1,12 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageNotFoundException;
-import com.urize.webapp.model.Contacts;
 import com.urize.webapp.model.ContactsType;
 import com.urize.webapp.model.Resume;
 import com.urize.webapp.sql.SQLHelper;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SQLStorage implements Storage {
 
@@ -72,10 +70,10 @@ public class SQLStorage implements Storage {
     @Override
     public Resume get(String uuid) {
         return sqlHelper.execute("" +
-                        "    SELECT * FROM resume r " +
-                        " LEFT JOIN contact c " +
-                        "        ON r.uuid = c.resume_uuid " +
-                        "     WHERE r.uuid =? ",
+                        "    select * from resume r " +
+                        " left join contact c " +
+                        "        on r.uuid = c.resume_uuid " +
+                        "     where r.uuid =? ",
                 ps -> {
                     ps.setString(1, uuid);
                     ResultSet rs = ps.executeQuery();
@@ -92,7 +90,11 @@ public class SQLStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("select * from resume left join contact c on resume.uuid = c.resume_uuid order by full_name, uuid", ps -> {
+        return sqlHelper.execute("" +
+                "select * from resume " +
+                "  left join contact c " +
+                "    on resume.uuid = c.resume_uuid " +
+                " order by full_name, uuid", ps -> {
 
             ResultSet resultSet = ps.executeQuery();
             Map<String, Resume> mapResume = new LinkedHashMap<>();
@@ -118,7 +120,7 @@ public class SQLStorage implements Storage {
     }
 
     private static void insertContacts(Resume resume, Connection statement) throws SQLException {
-        try (PreparedStatement ps = statement.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)")) {
+        try (PreparedStatement ps = statement.prepareStatement("insert into contact (resume_uuid, type, value) VALUES (?,?,?)")) {
             for (Map.Entry<ContactsType, String> e : resume.getContacts().entrySet()) {
                 ps.setString(1, resume.getUuid());
                 ps.setString(2, e.getKey().name());
