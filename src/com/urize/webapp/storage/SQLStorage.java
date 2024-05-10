@@ -83,47 +83,29 @@ public class SQLStorage implements Storage {
                         throw new StorageNotFoundException(uuid);
                     }
                     Resume resume = new Resume(uuid, rs.getString("full_name"));
-                    getContacts(rs, resume);
+                    do {
+                        addContact(rs, resume);
+                    } while (rs.next());
                     return resume;
                 });
     }
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.transactionalExecute(ps -> {
-            List<Resume> list = new ArrayList<>();
-            Map<String, List<Contacts>> contactsMap = new HashMap<>();
+        return sqlHelper.execute("select * from resume left join contact c on resume.uuid = c.resume_uuid order by full_name, uuid", ps -> {
 
-            try (PreparedStatement statement = ps.prepareStatement("SELECT * from resume")) {
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    String uuid = resultSet.getString("uuid");
-                    String fullName = resultSet.getString("full_name");
-                    list.add(new Resume(uuid, fullName));
-                    contactsMap.put(uuid, new ArrayList<>());
+            ResultSet resultSet = ps.executeQuery();
+            Map<String, Resume> mapResume = new LinkedHashMap<>();
+            while (resultSet.next()) {
+                String uuid = resultSet.getString("uuid");
+                Resume resume = mapResume.get(uuid);
+                if (resume == null) {
+                    resume = new Resume(uuid, resultSet.getString("full_name"));
+                    mapResume.put(uuid, resume);
                 }
+                addContact(resultSet, resume);
             }
-
-            try (PreparedStatement statement = ps.prepareStatement("SELECT * from contact")) {
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    String resumeUuid = resultSet.getString("resume_uuid");
-                    Contacts contacts = new Contacts(
-                            ContactsType.valueOf(resultSet.getString("type")),
-                            resultSet.getString("value")
-                    );
-                    contactsMap.get(resumeUuid).add(contacts);
-                }
-            }
-
-            list.forEach(item -> {
-                List<Contacts> contactsList = contactsMap.get(item.getUuid());
-                if (contactsList != null) {
-                    contactsList.forEach(contacts -> item.addContacts(contacts.getContactsType(), contacts.getValue()));
-                }
-            });
-
-            return list.stream().sorted().collect(Collectors.toList());
+            return new ArrayList<>(mapResume.values());
         });
     }
 
@@ -147,13 +129,11 @@ public class SQLStorage implements Storage {
         }
     }
 
-    private static void getContacts(ResultSet rs, Resume r) throws SQLException {
-        do {
-            String value = rs.getString("value");
-            if (value != null) {
-                r.addContacts(ContactsType.valueOf(rs.getString("type")), value);
-            }
-        } while (rs.next());
+    private void addContact(ResultSet rs, Resume r) throws SQLException {
+        String value = rs.getString("value");
+        if (value != null) {
+            r.addContacts(ContactsType.valueOf(rs.getString("type")), value);
+        }
     }
 
 }
