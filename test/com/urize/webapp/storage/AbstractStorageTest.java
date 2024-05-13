@@ -27,10 +27,10 @@ public abstract class AbstractStorageTest {
     private final String UUID_NOT_EXIST = "uuid8";
     private final static Resume resume1 = new Resume(UUID1, "Garry");
     private final Resume resume3 = new Resume(UUID2, "Tom");
-    private final Resume resume2 = new Resume(UUID3,"Tim");
+    private final Resume resume2 = new Resume(UUID3, "Tim");
     private final Resume resume4 = new Resume(UUID_NOT_EXIST, "Bill");
     private final List<Resume> emptyArray = new ArrayList<>();
-    private final  List<Resume> expected = Arrays.asList(resume1, resume2, resume3);
+    private final List<Resume> expected = Arrays.asList(resume1, resume2, resume3);
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -47,13 +47,13 @@ public abstract class AbstractStorageTest {
         contacts.put(ContactsType.HOMEPAGE, "www.myPage.com");
         resume1.setContacts(contacts);
 
-       /* Map<SectionType, AbstractSection> sections = new HashMap<>();
+        Map<SectionType, AbstractSection> sections = new HashMap<>();
         sections.put(SectionType.OBJECTIVE, new TextSection("position"));
         sections.put(SectionType.PERSONAL, new TextSection("personal"));
-        sections.put(SectionType.ACHIEVEMENT, new ListSection(Arrays.asList("One", "Two")));
-        sections.put(SectionType.QUALIFICATIONS, new ListSection(Arrays.asList("Three", "Four")));
-
-        sections.put(SectionType.EXPERIENCE,  new CompanySection(List.of(
+        sections.put(SectionType.ACHIEVEMENT, new ListSection(Arrays.asList("One", "Two", "Three")));
+        sections.put(SectionType.QUALIFICATIONS, new ListSection(Arrays.asList("Three", "Four", "Five")));
+        resume1.setSections(sections);
+         /* sections.put(SectionType.EXPERIENCE,  new CompanySection(List.of(
                 new Company("Company", "http://company.ru",
                         new Company.Period(YearMonth.of(2005, 1), YearMonth.of(2007, 2), "position1", "content1"),
                         new Company.Period(YearMonth.of(2007, 2), YearMonth.of(2009, 4), "position2", "content2")))));
@@ -122,7 +122,7 @@ public abstract class AbstractStorageTest {
     public void update() {
         Resume newResume = new Resume(UUID1, "New Name");
         storage.update(newResume);
-        assertTrue(newResume.equals(storage.get(UUID1)));
+        assertEquals(newResume, storage.get(UUID1));
     }
 
     @Test
@@ -133,7 +133,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getNotFoundException() {
-            Assertions.assertThrows(StorageNotFoundException.class, () -> storage.get(UUID_NOT_EXIST));
+        Assertions.assertThrows(StorageNotFoundException.class, () -> storage.get(UUID_NOT_EXIST));
     }
 
     @Test
@@ -146,7 +146,6 @@ public abstract class AbstractStorageTest {
         Resume resume8 = new Resume(UUID_NOT_EXIST);
         Assertions.assertThrows(StorageNotFoundException.class, () -> storage.update(resume8));
     }
-
 
 
     public void assertGet(Resume resume) {

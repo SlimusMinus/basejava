@@ -1,8 +1,7 @@
 package com.urize.webapp.storage;
 
 import com.urize.webapp.exception.StorageNotFoundException;
-import com.urize.webapp.model.ContactsType;
-import com.urize.webapp.model.Resume;
+import com.urize.webapp.model.*;
 import com.urize.webapp.sql.SQLHelper;
 
 import java.sql.*;
@@ -30,10 +29,12 @@ public class SQLStorage implements Storage {
                         ps.execute();
                     }
                     insertContacts(r, conn);
+                    insertSections(r, conn);
                     return null;
                 }
         );
     }
+
 
     @Override
     public void update(Resume resume) {
@@ -73,6 +74,8 @@ public class SQLStorage implements Storage {
                         "    select * from resume r " +
                         " left join contact c " +
                         "        on r.uuid = c.resume_uuid " +
+                        " left join public.section s" +
+                        "        on r.uuid = s.resume_uuid" +
                         "     where r.uuid =? ",
                 ps -> {
                     ps.setString(1, uuid);
@@ -86,11 +89,14 @@ public class SQLStorage implements Storage {
                     } while (rs.next());
                     return resume;
                 });
+
     }
+
+
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("" +
+       /* return sqlHelper.execute("" +
                 "select * from resume " +
                 "  left join contact c " +
                 "    on resume.uuid = c.resume_uuid " +
@@ -109,6 +115,26 @@ public class SQLStorage implements Storage {
             }
             return new ArrayList<>(mapResume.values());
         });
+*/
+        return sqlHelper.transactionalExecute(statement -> {
+            Map<String, Resume> resumeList = new LinkedHashMap<>();
+            try (PreparedStatement ps = statement.prepareStatement("select * from resume order by full_name, uuid")) {
+                ResultSet resultSet = ps.executeQuery();
+                while (resultSet.next()) {
+                    final String uuid = resultSet.getString("uuid");
+                    resumeList.put(uuid, new Resume(uuid, resultSet.getString("full_name")));
+                }
+            }
+            try (PreparedStatement ps = statement.prepareStatement("select * from contact")) {
+                ResultSet resultSet = ps.executeQuery();
+                while (resultSet.next()) {
+                    Resume resume = resumeList.get(resultSet.getString("resume_uuid"));
+                    addContact(resultSet, resume);
+                }
+            }
+            return new ArrayList<>(resumeList.values());
+        });
+
     }
 
     @Override
@@ -130,12 +156,51 @@ public class SQLStorage implements Storage {
             ps.executeBatch();
         }
     }
-
     private void addContact(ResultSet rs, Resume r) throws SQLException {
         String value = rs.getString("value");
         if (value != null) {
             r.addContacts(ContactsType.valueOf(rs.getString("type")), value);
         }
+        String typeSection = rs.getString("typeSection");
+        if(typeSection != null){
+            switch (rs.getString("typeSection")){
+                case "PERSONAL", "OBJECTIVE" -> r.addSections(SectionType.valueOf(typeSection), new TextSection(rs.getString("valueSection")));
+                case "ACHIEVEMENT", "QUALIFICATIONS" -> addListSection(typeSection, rs, r);
+            }
+        }
     }
+
+    private void addListSection(String typeSection, ResultSet rs, Resume r) throws SQLException {
+        String[] res = rs.getString("valueSection").split("\n");
+        List<String> list = new ArrayList<>(Arrays.asList(res));
+        r.addSections(SectionType.valueOf(typeSection), new ListSection(list));
+    }
+
+    private void insertSections(Resume r, Connection statement) throws SQLException {
+        try (PreparedStatement ps = statement.prepareStatement("insert into section (resume_uuid, typeSection, valueSection) values (?,?,?)")) {
+            for (Map.Entry<SectionType, AbstractSection> item : r.getSections().entrySet()) {
+                String result = "";
+                switch (item.getKey()) {
+                    case PERSONAL, OBJECTIVE -> result = item.getValue().toString();
+                    case ACHIEVEMENT, QUALIFICATIONS -> result = getListSections(result, (ListSection) item.getValue());
+                }
+                ps.setString(1, r.getUuid());
+                ps.setString(2, item.getKey().name());
+                ps.setString(3, result);
+                ps.executeUpdate();
+            }
+
+        }
+    }
+
+    private String getListSections(String result, ListSection value) {
+        StringBuilder resultBuilder = new StringBuilder(result);
+        for (var item : value.getList()) {
+            resultBuilder.append(item).append("\n");
+        }
+        result = resultBuilder.toString();
+        return result;
+    }
+
 
 }

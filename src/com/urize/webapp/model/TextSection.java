@@ -33,6 +33,6 @@ public class TextSection extends AbstractSection implements Serializable {
 
     @Override
     public String toString() {
-        return "TextSection " + "section = " + section;
+        return section;
     }
 }
