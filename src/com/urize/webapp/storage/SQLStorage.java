@@ -85,12 +85,14 @@ public class SQLStorage implements Storage {
                     }
                     Resume resume = new Resume(uuid, rs.getString("full_name"));
                     do {
-                        addContactAndSection(rs, resume);
+                        addContact(rs, resume);
+                        addSection(rs, resume);
                     } while (rs.next());
                     return resume;
                 });
 
     }
+
 
 
 
@@ -129,7 +131,15 @@ public class SQLStorage implements Storage {
                 ResultSet resultSet = ps.executeQuery();
                 while (resultSet.next()) {
                     Resume resume = resumeList.get(resultSet.getString("resume_uuid"));
-                    addContactAndSection(resultSet, resume);
+                    addContact(resultSet, resume);
+                }
+            }
+
+            try (PreparedStatement ps = statement.prepareStatement("select * from section")) {
+                ResultSet resultSet = ps.executeQuery();
+                while (resultSet.next()) {
+                    Resume resume = resumeList.get(resultSet.getString("resume_uuid"));
+                    addSection(resultSet, resume);
                 }
             }
             return new ArrayList<>(resumeList.values());
@@ -156,19 +166,25 @@ public class SQLStorage implements Storage {
             ps.executeBatch();
         }
     }
-    private void addContactAndSection (ResultSet rs, Resume r) throws SQLException {
+    private void addContact(ResultSet rs, Resume r) throws SQLException {
         String value = rs.getString("value");
         if (value != null) {
             r.addContacts(ContactsType.valueOf(rs.getString("type")), value);
         }
+
+    }
+
+    private void addSection(ResultSet rs, Resume resume) throws SQLException {
         String typeSection = rs.getString("typeSection");
         if(typeSection != null){
             switch (rs.getString("typeSection")){
-                case "PERSONAL", "OBJECTIVE" -> r.addSections(SectionType.valueOf(typeSection), new TextSection(rs.getString("valueSection")));
-                case "ACHIEVEMENT", "QUALIFICATIONS" -> addListSection(typeSection, rs, r);
+                case "PERSONAL", "OBJECTIVE" -> resume.addSections(SectionType.valueOf(typeSection), new TextSection(rs.getString("valueSection")));
+                case "ACHIEVEMENT", "QUALIFICATIONS" -> addListSection(typeSection, rs, resume);
             }
         }
     }
+    
+    
 
     private void addListSection(String typeSection, ResultSet rs, Resume r) throws SQLException {
         String[] res = rs.getString("valueSection").split("\n");
