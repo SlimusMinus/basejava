@@ -9,7 +9,7 @@ import java.util.Properties;
 
 @Getter
 public class Config {
-    private static final File STORAGE = new File("config/resumes.properties");
+    private static final File STORAGE = new File("D:\\Working\\Ultimate_Project\\basejava\\config\\resumes.properties");
     private static final Config INSTANCE = new Config();
 
     private final Properties properties = new Properties();
