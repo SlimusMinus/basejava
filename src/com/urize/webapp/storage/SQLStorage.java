@@ -35,7 +35,6 @@ public class SQLStorage implements Storage {
         );
     }
 
-
     @Override
     public void update(Resume resume) {
         sqlHelper.transactionalExecute(statement -> {
@@ -46,13 +45,12 @@ public class SQLStorage implements Storage {
                     throw new StorageNotFoundException(resume.getUuid());
                 }
             }
-            try (PreparedStatement ps = statement.prepareStatement("delete from contact where resume_uuid = ?")) {
-                ps.setString(1, resume.getUuid());
-                if (ps.executeUpdate() == 0) {
-                    throw new StorageNotFoundException(resume.getUuid());
-                }
-            }
+            deleteContactOrSection(statement, "delete from contact where resume_uuid = ?", resume);
+            deleteContactOrSection(statement, "delete from section where resume_uuid = ?", resume);
+
             insertContacts(resume, statement);
+            insertSections(resume, statement);
+
             return null;
         });
     }
@@ -92,9 +90,6 @@ public class SQLStorage implements Storage {
                 });
 
     }
-
-
-
 
     @Override
     public List<Resume> getAllSorted() {
@@ -183,8 +178,6 @@ public class SQLStorage implements Storage {
             }
         }
     }
-    
-    
 
     private void addListSection(String typeSection, ResultSet rs, Resume r) throws SQLException {
         String[] res = rs.getString("valueSection").split("\n");
@@ -218,5 +211,13 @@ public class SQLStorage implements Storage {
         return result;
     }
 
+    private static void deleteContactOrSection(Connection statement, String sql, Resume resume) throws SQLException {
+        try (PreparedStatement ps = statement.prepareStatement(sql)) {
+            ps.setString(1, resume.getUuid());
+            if (ps.executeUpdate() == 0) {
+                throw new StorageNotFoundException(resume.getUuid());
+            }
+        }
+    }
 
 }
