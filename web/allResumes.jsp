@@ -9,19 +9,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
-
 <html>
 <head>
     <title>Title</title>
 </head>
 <body>
-    <table>
+    <table border="1">
         <tr>
+            <th>num</th>
             <th>uuid</th>
             <th>full name</th>
         </tr>
-        <c:forEach items="${listResume}" var="list">
+        <c:forEach items="${listResume}" var="list" varStatus="loop">
             <tr>
+                <td>${loop.index+1}</td>
                 <td>${list.getUuid()}</td>
                 <td>${list.getFullName()}</td>
             </tr>
