@@ -47,7 +47,7 @@ public abstract class AbstractStorageTest {
         contacts.put(ContactsType.HOMEPAGE, "www.myPage.com");
         resume1.setContacts(contacts);
 
-        Map<SectionType, AbstractSection> sections = new HashMap<>();
+        Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
         sections.put(SectionType.OBJECTIVE, new TextSection("position"));
         sections.put(SectionType.PERSONAL, new TextSection("personal"));
         sections.put(SectionType.ACHIEVEMENT, new ListSection(Arrays.asList("One", "Two", "Three")));
@@ -73,7 +73,7 @@ public abstract class AbstractStorageTest {
         storage.save(resume3);
     }
 
-    /*@AfterEach
+    @AfterEach
     public void clearStorage() {
         storage.clear();
     }
@@ -83,7 +83,7 @@ public abstract class AbstractStorageTest {
         storage.clear();
         assertSize(0);
         assertEquals(emptyArray, storage.getAllSorted());
-    }*/
+    }
 
     @Test
     public void save() {
@@ -120,9 +120,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume newResume = new Resume(UUID1, "New Name");
+        Resume newResume = new Resume(UUID2, "New Name");
         storage.update(newResume);
-        assertEquals(newResume, storage.get(UUID1));
+        assertEquals(newResume, storage.get(UUID2));
     }
 
     @Test

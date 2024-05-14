@@ -1,6 +1,7 @@
 package com.urize.webapp.servlet;
 
 import com.urize.webapp.model.Resume;
+import com.urize.webapp.sql.Config;
 import com.urize.webapp.storage.SQLStorage;
 import com.urize.webapp.storage.Storage;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
-    Storage storage = new SQLStorage("jdbc:postgresql://localhost:5432/postgres", "postgres", "root");
+    private final Storage storage = Config.getInstance().getStorage();
 
     @Override
     public void init() throws ServletException {

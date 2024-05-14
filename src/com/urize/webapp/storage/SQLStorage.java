@@ -161,6 +161,7 @@ public class SQLStorage implements Storage {
             ps.executeBatch();
         }
     }
+
     private void addContact(ResultSet rs, Resume r) throws SQLException {
         String value = rs.getString("value");
         if (value != null) {
@@ -171,9 +172,10 @@ public class SQLStorage implements Storage {
 
     private void addSection(ResultSet rs, Resume resume) throws SQLException {
         String typeSection = rs.getString("typeSection");
-        if(typeSection != null){
-            switch (rs.getString("typeSection")){
-                case "PERSONAL", "OBJECTIVE" -> resume.addSections(SectionType.valueOf(typeSection), new TextSection(rs.getString("valueSection")));
+        if (typeSection != null) {
+            switch (rs.getString("typeSection")) {
+                case "PERSONAL", "OBJECTIVE" ->
+                        resume.addSections(SectionType.valueOf(typeSection), new TextSection(rs.getString("valueSection")));
                 case "ACHIEVEMENT", "QUALIFICATIONS" -> addListSection(typeSection, rs, resume);
             }
         }
@@ -203,20 +205,15 @@ public class SQLStorage implements Storage {
     }
 
     private String getListSections(String result, ListSection value) {
-        StringBuilder resultBuilder = new StringBuilder(result);
-        for (var item : value.getList()) {
-            resultBuilder.append(item).append("\n");
-        }
-        result = resultBuilder.toString();
+        List<String> list = value.getList();
+        String joinedItems = String.join("\n", list);
+        result += joinedItems;
         return result;
     }
 
     private static void deleteContactOrSection(Connection statement, String sql, Resume resume) throws SQLException {
         try (PreparedStatement ps = statement.prepareStatement(sql)) {
             ps.setString(1, resume.getUuid());
-            if (ps.executeUpdate() == 0) {
-                throw new StorageNotFoundException(resume.getUuid());
-            }
         }
     }
 
