@@ -171,44 +171,35 @@ public class SQLStorage implements Storage {
     }
 
     private void addSection(ResultSet rs, Resume resume) throws SQLException {
-        String typeSection = rs.getString("typeSection");
-        if (typeSection != null) {
-            switch (rs.getString("typeSection")) {
-                case "PERSONAL", "OBJECTIVE" ->
-                        resume.addSections(SectionType.valueOf(typeSection), new TextSection(rs.getString("valueSection")));
-                case "ACHIEVEMENT", "QUALIFICATIONS" -> addListSection(typeSection, rs, resume);
-            }
-        }
-    }
+        final String section = rs.getString("typeSection");
 
-    private void addListSection(String typeSection, ResultSet rs, Resume r) throws SQLException {
-        String[] res = rs.getString("valueSection").split("\n");
-        List<String> list = new ArrayList<>(Arrays.asList(res));
-        r.addSections(SectionType.valueOf(typeSection), new ListSection(list));
+        if (section == null) {
+            return;
+        }
+
+        final SectionType sectionType = SectionType.valueOf(section);
+        switch (sectionType) {
+            case PERSONAL, OBJECTIVE -> resume.addSections(sectionType, new TextSection(rs.getString("valueSection")));
+            case ACHIEVEMENT, QUALIFICATIONS -> resume.addSections(
+                    sectionType, new ListSection(Arrays.asList(rs.getString("valueSection").split("\n")))
+            );
+        }
     }
 
     private void insertSections(Resume r, Connection statement) throws SQLException {
         try (PreparedStatement ps = statement.prepareStatement("insert into section (resume_uuid, typeSection, valueSection) values (?,?,?)")) {
             for (Map.Entry<SectionType, AbstractSection> item : r.getSections().entrySet()) {
-                String result = "";
-                switch (item.getKey()) {
-                    case PERSONAL, OBJECTIVE -> result = item.getValue().toString();
-                    case ACHIEVEMENT, QUALIFICATIONS -> result = getListSections(result, (ListSection) item.getValue());
-                }
+                String result = switch (item.getKey()) {
+                    case PERSONAL, OBJECTIVE -> item.getValue().toString();
+                    case ACHIEVEMENT, QUALIFICATIONS -> String.join("\n", ((ListSection) item.getValue()).getList());
+                    case EXPERIENCE, EDUCATION -> "";
+                };
                 ps.setString(1, r.getUuid());
                 ps.setString(2, item.getKey().name());
                 ps.setString(3, result);
                 ps.executeUpdate();
             }
-
         }
-    }
-
-    private String getListSections(String result, ListSection value) {
-        List<String> list = value.getList();
-        String joinedItems = String.join("\n", list);
-        result += joinedItems;
-        return result;
     }
 
     private static void deleteContactOrSection(Connection statement, String sql, Resume resume) throws SQLException {

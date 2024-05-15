@@ -12,8 +12,10 @@
 <html>
 <head>
     <title>Title</title>
+    <link rel="stylesheet" href="outlines.css">
 </head>
 <body>
+<header>База данных резюме</header>
     <table border="1">
         <tr>
             <th>num</th>
@@ -28,5 +30,6 @@
             </tr>
         </c:forEach>
     </table>
+<footer>Author Alexandr Krylov</footer>
 </body>
 </html>
