@@ -17,13 +17,8 @@ public class ResumeServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        try {
-            Class.forName("org.postgresql.Driver");
-            super.init();
-            storage = Config.getInstance().getStorage();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        super.init();
+        storage = Config.getInstance().getStorage();
     }
 
     @Override

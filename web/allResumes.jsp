@@ -12,24 +12,24 @@
 <html>
 <head>
     <title>Title</title>
-    <link rel="stylesheet" href="outlines.css">
+    <link rel="stylesheet" href="D:\Working\Ultimate_Project\basejava\web\outlines.css">
 </head>
 <body>
 <header>База данных резюме</header>
-    <table border="1">
+<table border="1">
+    <tr>
+        <th>num</th>
+        <th>uuid</th>
+        <th>full name</th>
+    </tr>
+    <c:forEach items="${listResume}" var="list" varStatus="loop">
         <tr>
-            <th>num</th>
-            <th>uuid</th>
-            <th>full name</th>
+            <td>${loop.index+1}</td>
+            <td>${list.getUuid()}</td>
+            <td>${list.getFullName()}</td>
         </tr>
-        <c:forEach items="${listResume}" var="list" varStatus="loop">
-            <tr>
-                <td>${loop.index+1}</td>
-                <td>${list.getUuid()}</td>
-                <td>${list.getFullName()}</td>
-            </tr>
-        </c:forEach>
-    </table>
+    </c:forEach>
+</table>
 <footer>Author Alexandr Krylov</footer>
 </body>
 </html>
