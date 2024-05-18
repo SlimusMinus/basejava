@@ -25,6 +25,10 @@ public class Resume implements Comparable<Resume>, Serializable {
     private static final long serialVersionUID = 1L;
     private String uuid;
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     private String fullName;
 
     private Map<ContactsType, String> contacts = new EnumMap<>(ContactsType.class);
@@ -62,6 +66,9 @@ public class Resume implements Comparable<Resume>, Serializable {
         this.sections = sections;
     }
 
+    public String getContact(ContactsType type) {
+        return contacts.get(type);
+    }
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

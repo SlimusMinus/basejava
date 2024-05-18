@@ -46,7 +46,7 @@ public class SQLStorage implements Storage {
             try (PreparedStatement ps = statement.prepareStatement("update resume set full_name = ? where uuid = ?")) {
                 ps.setString(1, resume.getFullName());
                 ps.setString(2, resume.getUuid());
-                if (ps.executeUpdate() == 0) {
+                if (ps.executeUpdate() != 1) {
                     throw new StorageNotFoundException(resume.getUuid());
                 }
             }
@@ -210,6 +210,7 @@ public class SQLStorage implements Storage {
     private static void deleteContactOrSection(Connection statement, String sql, Resume resume) throws SQLException {
         try (PreparedStatement ps = statement.prepareStatement(sql)) {
             ps.setString(1, resume.getUuid());
+            ps.execute();
         }
     }
 
