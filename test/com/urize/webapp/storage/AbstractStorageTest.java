@@ -53,7 +53,7 @@ public abstract class AbstractStorageTest {
         sections.put(SectionType.ACHIEVEMENT, new ListSection(Arrays.asList("One", "Two", "Three")));
         sections.put(SectionType.QUALIFICATIONS, new ListSection(Arrays.asList("Three", "Four", "Five")));
         resume1.setSections(sections);
-         /* sections.put(SectionType.EXPERIENCE,  new CompanySection(List.of(
+          sections.put(SectionType.EXPERIENCE,  new CompanySection(List.of(
                 new Company("Company", "http://company.ru",
                         new Company.Period(YearMonth.of(2005, 1), YearMonth.of(2007, 2), "position1", "content1"),
                         new Company.Period(YearMonth.of(2007, 2), YearMonth.of(2009, 4), "position2", "content2")))));
@@ -62,7 +62,7 @@ public abstract class AbstractStorageTest {
                 new Company("University", "http://university.ru",
                         new Company.Period(YearMonth.of(2002, 1), YearMonth.of(2003, 2), "student", "study"),
                         new Company.Period(YearMonth.of(2003, 2), YearMonth.of(2004, 4), "aspirant", "teacher")))));
-        resume1.setSections(sections);*/
+        resume1.setSections(sections);
     }
 
 
@@ -73,7 +73,7 @@ public abstract class AbstractStorageTest {
         storage.save(resume3);
     }
 
-    @AfterEach
+   /* @AfterEach
     public void clearStorage() {
         storage.clear();
     }
@@ -83,7 +83,7 @@ public abstract class AbstractStorageTest {
         storage.clear();
         assertSize(0);
         assertEquals(emptyArray, storage.getAllSorted());
-    }
+    }*/
 
     @Test
     public void save() {

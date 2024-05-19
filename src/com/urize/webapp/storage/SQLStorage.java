@@ -3,6 +3,7 @@ package com.urize.webapp.storage;
 import com.urize.webapp.exception.StorageNotFoundException;
 import com.urize.webapp.model.*;
 import com.urize.webapp.sql.SQLHelper;
+import com.urize.webapp.util.JsonParser;
 
 import java.sql.*;
 import java.util.*;
@@ -176,32 +177,22 @@ public class SQLStorage implements Storage {
     }
 
     private void addSection(ResultSet rs, Resume resume) throws SQLException {
-        final String section = rs.getString("typeSection");
+        final String content = rs.getString("valueSection");
 
-        if (section == null) {
-            return;
-        }
-
-        final SectionType sectionType = SectionType.valueOf(section);
-        switch (sectionType) {
-            case PERSONAL, OBJECTIVE -> resume.addSections(sectionType, new TextSection(rs.getString("valueSection")));
-            case ACHIEVEMENT, QUALIFICATIONS -> resume.addSections(
-                    sectionType, new ListSection(Arrays.asList(rs.getString("valueSection").split("\n")))
-            );
+        if (content != null) {
+            SectionType type = SectionType.valueOf(rs.getString("typeSection"));
+            resume.addSections(type, JsonParser.read(content, AbstractSection.class));
         }
     }
 
     private void insertSections(Resume r, Connection statement) throws SQLException {
         try (PreparedStatement ps = statement.prepareStatement("insert into section (resume_uuid, typeSection, valueSection) values (?,?,?)")) {
             for (Map.Entry<SectionType, AbstractSection> item : r.getSections().entrySet()) {
-                String result = switch (item.getKey()) {
-                    case PERSONAL, OBJECTIVE -> item.getValue().toString();
-                    case ACHIEVEMENT, QUALIFICATIONS -> String.join("\n", ((ListSection) item.getValue()).getList());
-                    case EXPERIENCE, EDUCATION -> "";
-                };
+
                 ps.setString(1, r.getUuid());
                 ps.setString(2, item.getKey().name());
-                ps.setString(3, result);
+                AbstractSection sectionType = item.getValue();
+                ps.setString(3, JsonParser.write(sectionType, AbstractSection.class));
                 ps.executeUpdate();
             }
         }
