@@ -2,6 +2,8 @@ package com.urize.webapp.servlet;
 
 import com.urize.webapp.model.ContactsType;
 import com.urize.webapp.model.Resume;
+import com.urize.webapp.model.SectionType;
+import com.urize.webapp.model.TextSection;
 import com.urize.webapp.sql.Config;
 import com.urize.webapp.storage.Storage;
 
@@ -41,6 +43,9 @@ public class ResumeServlet extends HttpServlet {
             case "edit":
                 resume = storage.get(uuid);
                 break;
+            case "add":
+                resume = new Resume();
+                break;
             default:
                 throw new IllegalArgumentException("Action " + action + " illegal action");
         }
@@ -50,12 +55,25 @@ public class ResumeServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
-        r.setFullName(fullName);
+        Resume r;
+        if (uuid == null || uuid.isEmpty()) {
+            r = new Resume(fullName);
+            addContacts(request, r);
+            storage.save(r);
+        } else {
+            r = storage.get(uuid);
+            r.setFullName(fullName);
+            addContacts(request, r);
+            storage.update(r);
+        }
+        response.sendRedirect("resumes");
+    }
+
+    private static void addContacts(HttpServletRequest request, Resume r) {
         for (ContactsType type : ContactsType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && !value.trim().isEmpty()) {
@@ -64,7 +82,6 @@ public class ResumeServlet extends HttpServlet {
                 r.getContacts().remove(type);
             }
         }
-        storage.update(r);
-        response.sendRedirect("resumes");
     }
+
 }

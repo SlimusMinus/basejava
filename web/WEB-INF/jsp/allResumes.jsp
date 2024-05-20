@@ -28,6 +28,11 @@
             <td><a href="resumes?uuid=${list.uuid}&action=edit"><img src="../../img/pencil.png" alt=""></a></td>
         </tr>
     </c:forEach>
+    <form action="resumes" method="get" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="action" value="add">
+        <button type="submit">Добавить новое резюме</button>
+    </form>
+
 </table>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
