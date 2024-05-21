@@ -1,8 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="com.urize.webapp.model.ContactsType" %>
-<%@ page import="com.urize.webapp.model.ListSection" %>
-<%@ page import="com.urize.webapp.model.CompanySection" %>
+
 
 <html>
 <head>
@@ -14,79 +12,45 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
-    <h2>${resume.fullName}&nbsp; <a href="resumes?uuid=${resume.uuid}&action=edit"><img src="../../img/pencil.png"
-                                                                                        alt=""></a></h2>
-    <c:forEach var="contacts" items="${resume.contacts}">
-        <tr>
-            <td>${contacts.key.toHtml(contacts.value)} </td>
-            <br>
-        </tr>
-    </c:forEach>
-    <hr>
-    <table>
-        <c:forEach var="sections" items="${resume.sections}">
-            <c:set var="type" value="${sections.key}"/>
-            <c:set var="section" value="${sections.value}"/>
-            <jsp:useBean id="section" type="com.urize.webapp.model.AbstractSection"/>
-            <td><h3><a name="type.name">${type.title}</a></h3></td>
-            <c:choose>
-                <c:when test="${type == 'PERSONAL' || type == 'OBJECTIVE'}">
-                    <tr>
-                        <td>
-                                ${sections.value}
-                        </td>
-                    </tr>
-                </c:when>
-                <c:when test="${type == 'ACHIEVEMENT' || type == 'QUALIFICATIONS'}">
-                    <tr>
-                        <td>
-                            <ul>
-                                <c:forEach var="item" items="<%= ((ListSection)section).getList()  %>">
-                                    <li>${item}</li>
-                                </c:forEach>
-                            </ul>
-                        </td>
-                    </tr>
-                </c:when>
+    <h2>${resume.fullName}</h2>
 
-                <c:when test="${type == 'EXPERIENCE' || type == 'EDUCATION'}">
-                    <tr>
-                        <td>
-                            <ul>
-                                <c:forEach var="item" items="<%= ((CompanySection)section).getList()  %>">
-                                    <tr>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${empty item.link.url}">
-                                                    <h3>${item.link.name}</h3>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <h3><a href="${item.link.url}">${item.link.name}</a></h3>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                    </tr>
-
-                                    <c:forEach var="position" items="${item.periods}">
-                                        <tr>
-                                            <td>
-                                                <b>${position.startDate} - ${position.endDate}</b>
-                                            </td>
-                                            <td>
-                                                    ${position.title} ${position.description}
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </c:forEach>
-                            </ul>
-                        </td>
-                    </tr>
-                </c:when>
-
-            </c:choose>
+    <h3>Контакты:</h3>
+    <ul>
+        <c:forEach var="type" items="${resume.contacts.keySet()}">
+            <li><strong>${type.title}: </strong>${resume.contacts[type]}</li>
         </c:forEach>
-    </table>
-    <button onclick=window.history.back()>OK</button>
+    </ul>
+
+    <h3>Секции:</h3>
+    <c:forEach var="section" items="${resume.sections}">
+        <c:choose>
+            <c:when test="${section.key == 'PERSONAL' || section.key == 'OBJECTIVE'}">
+                <h4>${section.key.title}</h4>
+                <p>${section.value}</p>
+            </c:when>
+            <c:when test="${section.key == 'ACHIEVEMENT' || section.key == 'QUALIFICATIONS'}">
+                <h4>${section.key.title}</h4>
+                <ul>
+                    <c:forEach var="item" items="${section.value.list}">
+                        <li>${item}</li>
+                    </c:forEach>
+                </ul>
+            </c:when>
+            <c:when test="${section.key == 'EXPERIENCE' || section.key == 'EDUCATION'}">
+                <h4>${section.key.title}</h4>
+                <c:forEach var="company" items="${section.value.list}">
+                    <h5>${company.link.name}</h5>
+                    <c:forEach var="position" items="${company.periods}">
+                        <p>
+                                ${position.startDate} - ${position.endDate}<br>
+                            <strong>${position.title}</strong><br>
+                                ${position.description}
+                        </p>
+                    </c:forEach>
+                </c:forEach>
+            </c:when>
+        </c:choose>
+    </c:forEach>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
