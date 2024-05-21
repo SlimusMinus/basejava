@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 @Getter
@@ -16,6 +17,10 @@ public class CompanySection extends AbstractSection {
     public CompanySection(List<Company> list) {
         Objects.requireNonNull(list, "company must be not null");
         this.list = list;
+    }
+
+    public CompanySection(Company... companies) {
+        this(Arrays.asList(companies));
     }
 
     @Override

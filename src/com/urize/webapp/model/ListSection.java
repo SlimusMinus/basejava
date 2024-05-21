@@ -4,6 +4,7 @@ package com.urize.webapp.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 @Getter
@@ -11,10 +12,15 @@ import java.util.Objects;
 
 public class ListSection extends AbstractSection {
     List<String> list;
+    public static final ListSection EMPTY = new ListSection("");
 
     public ListSection(List<String> list) {
         Objects.requireNonNull(list, "list must not be a null");
         this.list = list;
+    }
+
+    public ListSection(String... items) {
+        this(Arrays.asList(items));
     }
 
     @Override

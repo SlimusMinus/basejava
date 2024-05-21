@@ -13,6 +13,8 @@ public class TextSection extends AbstractSection implements Serializable {
     private static final long serialVersionUID = 1L;
     private String section;
 
+    public static final TextSection EMPTY = new TextSection("");
+
     public TextSection(String section) {
         Objects.requireNonNull(section, "section must be not null");
         this.section = section;

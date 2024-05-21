@@ -4,6 +4,7 @@ import com.urize.webapp.util.LocalDateAdapter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.swing.text.Position;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -17,6 +18,9 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 public class Company implements Serializable {
+
+    public static final Company EMPTY = new Company("", "", Period.EMPTY);
+
     private static final long serialVersionUID = 1L;
     private Link link;
     private List<Period> periods = new ArrayList<>();
@@ -53,6 +57,11 @@ public class Company implements Serializable {
     @NoArgsConstructor
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Period implements Serializable {
+
+
+
+        public static final Period EMPTY = new Period();
+
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private YearMonth startDate;
         @XmlJavaTypeAdapter(LocalDateAdapter.class)

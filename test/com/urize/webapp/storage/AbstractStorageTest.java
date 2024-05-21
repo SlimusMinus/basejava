@@ -73,7 +73,7 @@ public abstract class AbstractStorageTest {
         storage.save(resume3);
     }
 
-   /* @AfterEach
+    @AfterEach
     public void clearStorage() {
         storage.clear();
     }
@@ -83,7 +83,7 @@ public abstract class AbstractStorageTest {
         storage.clear();
         assertSize(0);
         assertEquals(emptyArray, storage.getAllSorted());
-    }*/
+    }
 
     @Test
     public void save() {
