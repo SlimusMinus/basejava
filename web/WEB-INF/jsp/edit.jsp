@@ -1,6 +1,5 @@
 <%@ page import="com.urize.webapp.model.ContactsType" %>
 <%@ page import="com.urize.webapp.model.ListSection" %>
-<%@ page import="com.urize.webapp.model.CompanySection" %>
 <%@ page import="com.urize.webapp.model.SectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -34,61 +33,29 @@
 
         <h3 class="section-title">Секции:</h3>
         <hr>
-        <table>
-            <c:forEach var="section" items="${resume.sections}">
-                <c:set var="sectionValue" value="${section.value}"/>
-                <c:choose>
-                    <c:when test="${section.key == 'PERSONAL' || section.key == 'OBJECTIVE'}">
-                        <tr>
-                            <td class="title-column"><strong>${section.key.title}</strong></td>
-                            <td><label>
-                                <input type="text" name="${section.key}" size="30" value="${section.value}">
-                            </label></td>
-                        </tr>
-                    </c:when>
-                    <c:when test="${section.key == 'ACHIEVEMENT' || section.key == 'QUALIFICATIONS'}">
-                        <tr>
-                            <td class="title-column"><strong>${section.key.title}</strong></td>
-                            <td>
-                                <ul>
-                                    <c:forEach var="item" items="${sectionValue.list}">
-                                        <li>
-                                            <input type="text" size="30" value="${item}">
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </td>
-                        </tr>
-                    </c:when>
-                    <c:when test="${section.key == 'EXPERIENCE' || section.key == 'EDUCATION'}">
-                        <tr>
-                            <td class="title-column"><strong>${section.key.title}</strong></td>
-                            <td>
-                                <ul>
-                                    <c:forEach var="item" items="${sectionValue.list}">
-                                        <li>
-                                            <input type="text" size="30" value="${item.link.name}">
-                                            <a href="${item.link.url}" target="_blank">${item.link.name}</a>
-                                        </li>
-                                        <c:forEach var="position" items="${item.periods}">
-                                            <li>
-                                                <input type="text" size="15" value="${position.startDate}">
-                                                -
-                                                <input type="text" size="15" value="${position.endDate}">
-                                                <br>
-                                                <input type="text" size="30" value="${position.title}">
-                                                <br>
-                                                <input type="text" size="30" value="${position.description}">
-                                            </li>
-                                        </c:forEach>
-                                    </c:forEach>
-                                </ul>
-                            </td>
-                        </tr>
-                    </c:when>
-                </c:choose>
-            </c:forEach>
-        </table>
+        <c:forEach var="type" items="<%=SectionType.values()%>">
+            <c:set var="section" value="${resume.getSection(type)}"/>
+            <jsp:useBean id="section" type="com.urize.webapp.model.AbstractSection"/>
+            <h2><a>${type.title}</a></h2>
+            <c:choose>
+                <c:when test="${type=='OBJECTIVE'}">
+                    <label>
+                        <input type='text' name='${type}' size=70 value='<%=section%>'>
+                    </label>
+                </c:when>
+                <c:when test="${type=='PERSONAL'}">
+                    <label>
+                        <textarea name='${type}' cols=75 rows=5><%=section%></textarea>
+                    </label>
+                </c:when>
+                <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
+                    <label>
+                        <textarea name='${type}' cols=75
+                                  rows=5><%=String.join("\n", ((ListSection) section).getList())%></textarea>
+                    </label>
+                </c:when>
+            </c:choose>
+        </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
         <button type="button" class="cancel-button" onclick="window.history.back()">Отменить</button>

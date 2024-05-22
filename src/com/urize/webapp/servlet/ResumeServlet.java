@@ -31,17 +31,22 @@ public class ResumeServlet extends HttpServlet {
             return;
         }
 
-        Resume resume;
+        Resume r;
         switch (action) {
             case "delete":
                 storage.delete(uuid);
                 response.sendRedirect("resumes");
                 return;
             case "view":
+                r = storage.get(uuid);
+                break;
+            case "add":
+                r = Resume.EMPTY;
+                break;
             case "edit":
-                resume = storage.get(uuid);
+                r = storage.get(uuid);
                 for (SectionType type : SectionType.values()) {
-                    AbstractSection section = resume.getSection(type);
+                    AbstractSection section = r.getSection(type);
                     switch (type) {
                         case OBJECTIVE:
                         case PERSONAL:
@@ -56,18 +61,16 @@ public class ResumeServlet extends HttpServlet {
                             }
                             break;
                     }
-                    resume.addSections(type, section);
+                    r.addSections(type, section);
                 }
                 break;
-            case "add":
-                resume = Resume.EMPTY;
-                break;
             default:
-                throw new IllegalArgumentException("Action " + action + " illegal action");
+                throw new IllegalArgumentException("Action " + action + " is illegal");
         }
-        request.setAttribute("resume", resume);
-        request.getRequestDispatcher(action.equals("view") ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp").forward(request, response);
-
+        request.setAttribute("resume", r);
+        request.getRequestDispatcher(
+                ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
+        ).forward(request, response);
     }
 
     @Override
@@ -75,51 +78,48 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
+
+        final boolean isCreate = (uuid == null || uuid.isEmpty());
         Resume r;
-        if (uuid == null || uuid.isEmpty()) {
+        if (isCreate) {
             r = new Resume(fullName);
-            addContacts(request, r);
-            addSections(request, r);
-            storage.save(r);
         } else {
             r = storage.get(uuid);
             r.setFullName(fullName);
-            addContacts(request, r);
-            addSections(request, r);
+        }
+
+        for (ContactsType type : ContactsType.values()) {
+            String value = request.getParameter(type.name());
+            if (uuid == null || uuid.isEmpty()) {
+                r.getContacts().remove(type);
+            } else {
+                r.addContacts(type, value);
+            }
+        }
+        for (SectionType type : SectionType.values()) {
+            String value = request.getParameter(type.name());
+            String[] values = request.getParameterValues(type.name());
+            if (uuid == null || uuid.isEmpty() && values.length < 2) {
+                r.getSections().remove(type);
+            } else {
+                switch (type) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        r.addSections(type, new TextSection(value));
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        r.addSections(type, new ListSection(value.split("\\n")));
+                        break;
+                }
+            }
+        }
+        if (isCreate) {
+            storage.save(r);
+        } else {
             storage.update(r);
         }
         response.sendRedirect("resumes");
     }
 
-    private void addSections(HttpServletRequest request, Resume r) {
-        for (SectionType type : SectionType.values()) {
-            String value = request.getParameter(type.name());
-            if (value == null || value.trim().isEmpty()) {
-                continue; // Skip empty sections
-            }
-
-            switch (type) {
-                case OBJECTIVE:
-                case PERSONAL:
-                    r.addSections(type, new TextSection(value));
-                    break;
-                case ACHIEVEMENT:
-                case QUALIFICATIONS:
-                    List<String> items = Arrays.asList(value.split("\\r?\\n")); // Split value into a list by new lines
-                    r.addSections(type, new ListSection(items));
-                    break;
-            }
-        }
-    }
-
-    private static void addContacts(HttpServletRequest request, Resume r) {
-        for (ContactsType type : ContactsType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && !value.trim().isEmpty()) {
-                r.addContacts(type, value);
-            } else {
-                r.getContacts().remove(type);
-            }
-        }
-    }
 }
