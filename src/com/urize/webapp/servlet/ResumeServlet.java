@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.YearMonth;
 import java.util.*;
 
 public class ResumeServlet extends HttpServlet {
@@ -24,13 +25,11 @@ public class ResumeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
-
         if (action == null) {
             request.setAttribute("listResume", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/allResumes.jsp").forward(request, response);
             return;
         }
-
         Resume r;
         switch (action) {
             case "delete":
@@ -60,6 +59,21 @@ public class ResumeServlet extends HttpServlet {
                                 section = ListSection.EMPTY;
                             }
                             break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            CompanySection orgSection = (CompanySection) section;
+                            List<Company> emptyFirstOrganizations = new ArrayList<>();
+                            emptyFirstOrganizations.add(Company.EMPTY);
+                            if (orgSection != null) {
+                                for (Company org : orgSection.getList()) {
+                                    List<Company.Period> emptyFirstPositions = new ArrayList<>();
+                                    emptyFirstPositions.add(Company.Period.EMPTY);
+                                    emptyFirstPositions.addAll(org.getPeriods());
+                                    emptyFirstOrganizations.add(new Company(org.getLink(), emptyFirstPositions));
+                                }
+                            }
+                            section = new CompanySection(emptyFirstOrganizations);
+                            break;
                     }
                     r.addSections(type, section);
                 }
@@ -71,6 +85,7 @@ public class ResumeServlet extends HttpServlet {
         request.getRequestDispatcher(
                 ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
+
     }
 
     @Override
@@ -90,7 +105,7 @@ public class ResumeServlet extends HttpServlet {
 
         for (ContactsType type : ContactsType.values()) {
             String value = request.getParameter(type.name());
-            if (uuid == null || uuid.isEmpty()) {
+            if (value == null || value.isEmpty()) {
                 r.getContacts().remove(type);
             } else {
                 r.addContacts(type, value);
@@ -99,7 +114,7 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
-            if (uuid == null || uuid.isEmpty() && values.length < 2) {
+            if (value == null || value.isEmpty() && values.length < 2) {
                 r.getSections().remove(type);
             } else {
                 switch (type) {
@@ -110,6 +125,29 @@ public class ResumeServlet extends HttpServlet {
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
                         r.addSections(type, new ListSection(value.split("\\n")));
+                        break;
+                    case EDUCATION:
+                    case EXPERIENCE:
+                        List<Company> orgs = new ArrayList<>();
+                        String[] urls = request.getParameterValues(type.name() + "url");
+                        for (int i = 0; i < values.length; i++) {
+                            String name = values[i];
+                            if (name == null || name.isEmpty()) {
+                                List<Company.Period> positions = new ArrayList<>();
+                                String pfx = type.name() + i;
+                                String[] startDates = request.getParameterValues(pfx + "startDate");
+                                String[] endDates = request.getParameterValues(pfx + "endDate");
+                                String[] titles = request.getParameterValues(pfx + "title");
+                                String[] descriptions = request.getParameterValues(pfx + "description");
+                                for (int j = 0; j < titles.length; j++) {
+                                    if (titles[j] == null || titles[j].isEmpty()) {
+                                        positions.add(new Company.Period(YearMonth.parse(startDates[j]), YearMonth.parse(endDates[j]), titles[j], descriptions[j]));
+                                    }
+                                }
+                                orgs.add(new Company(new Link(name, urls[i]), positions));
+                            }
+                        }
+                        r.addSections(type, new CompanySection(orgs));
                         break;
                 }
             }
