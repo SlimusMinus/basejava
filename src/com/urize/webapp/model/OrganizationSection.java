@@ -11,15 +11,15 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CompanySection extends AbstractSection {
-    private List<Company> list;
+public class OrganizationSection extends Section {
+    private List<Organization> list;
 
-    public CompanySection(List<Company> list) {
+    public OrganizationSection(List<Organization> list) {
         Objects.requireNonNull(list, "company must be not null");
         this.list = list;
     }
 
-    public CompanySection(Company... companies) {
+    public OrganizationSection(Organization... companies) {
         this(Arrays.asList(companies));
     }
 
@@ -27,7 +27,7 @@ public class CompanySection extends AbstractSection {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        CompanySection that = (CompanySection) object;
+        OrganizationSection that = (OrganizationSection) object;
         return Objects.equals(list, that.list);
     }
 

@@ -3,8 +3,11 @@ package com.urize.webapp.storage.serializable;
 import com.urize.webapp.model.*;
 
 import java.io.*;
-import java.time.YearMonth;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class DataSerializer implements SerializableInterface {
     @Override
@@ -12,33 +15,33 @@ public class DataSerializer implements SerializableInterface {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
-
-
-            Map<ContactsType, String> contacts = r.getContacts();
+            Map<ContactType, String> contacts = r.getContacts();
             writeCollection(dos, contacts.entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
             });
 
-
             writeCollection(dos, r.getSections().entrySet(), entry -> {
                 SectionType type = entry.getKey();
-                AbstractSection section = entry.getValue();
+                Section section = entry.getValue();
                 dos.writeUTF(type.name());
                 switch (type) {
-                    case PERSONAL, OBJECTIVE:
+                    case PERSONAL:
+                    case OBJECTIVE:
                         dos.writeUTF(((TextSection) section).getSection());
                         break;
-                    case ACHIEVEMENT, QUALIFICATIONS:
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
                         writeCollection(dos, ((ListSection) section).getList(), dos::writeUTF);
                         break;
-                    case EXPERIENCE, EDUCATION:
-                        writeCollection(dos, ((CompanySection) section).getList(), org -> {
-                            dos.writeUTF(org.getLink().getName());
-                            dos.writeUTF(org.getLink().getUrl());
-                            writeCollection(dos, org.getPeriods(), position -> {
-                                writeYearMonth(dos, position.getStartDate());
-                                writeYearMonth(dos, position.getEndDate());
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        writeCollection(dos, ((OrganizationSection) section).getList(), org -> {
+                            dos.writeUTF(org.getHomePage().getName());
+                            dos.writeUTF(org.getHomePage().getUrl());
+                            writeCollection(dos, org.getPositions(), position -> {
+                                writeLocalDate(dos, position.getStartDate());
+                                writeLocalDate(dos, position.getEndDate());
                                 dos.writeUTF(position.getTitle());
                                 dos.writeUTF(position.getDescription());
                             });
@@ -46,18 +49,16 @@ public class DataSerializer implements SerializableInterface {
                         break;
                 }
             });
-
         }
-
     }
 
-    private void writeYearMonth(DataOutputStream dos, YearMonth ld) throws IOException {
+    private void writeLocalDate(DataOutputStream dos, LocalDate ld) throws IOException {
         dos.writeInt(ld.getYear());
         dos.writeInt(ld.getMonth().getValue());
     }
 
-    private YearMonth readYearMonth(DataInputStream dis) throws IOException {
-        return YearMonth.of(dis.readInt(), dis.readInt());
+    private LocalDate readLocalDate(DataInputStream dis) throws IOException {
+        return LocalDate.of(dis.readInt(), dis.readInt(), 1);
     }
 
     @Override
@@ -66,28 +67,35 @@ public class DataSerializer implements SerializableInterface {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            readItems(dis, () -> resume.addContacts(ContactsType.valueOf(dis.readUTF()), dis.readUTF()));
+            readItems(dis, () -> resume.setContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
             readItems(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                resume.addSections(sectionType, readSection(dis, sectionType));
+                resume.setSection(sectionType, readSection(dis, sectionType));
             });
             return resume;
         }
     }
 
-    private AbstractSection readSection(DataInputStream dis, SectionType sectionType) throws IOException {
-        return switch (sectionType) {
-            case PERSONAL, OBJECTIVE -> new TextSection(dis.readUTF());
-            case ACHIEVEMENT, QUALIFICATIONS -> new ListSection(readList(dis, dis::readUTF));
-            case EXPERIENCE, EDUCATION -> new CompanySection(
-                    readList(dis, () -> new Company(
-                            new Link(dis.readUTF(), dis.readUTF()),
-                            readList(dis, () -> new Company.Period(
-                                    readYearMonth(dis), readYearMonth(dis), dis.readUTF(), dis.readUTF()
-                            ))
-                    )));
-            default -> throw new IllegalStateException();
-        };
+    private Section readSection(DataInputStream dis, SectionType sectionType) throws IOException {
+        switch (sectionType) {
+            case PERSONAL:
+            case OBJECTIVE:
+                return new TextSection(dis.readUTF());
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                return new ListSection(readList(dis, dis::readUTF));
+            case EXPERIENCE:
+            case EDUCATION:
+                return new OrganizationSection(
+                        readList(dis, () -> new Organization(
+                                new Link(dis.readUTF(), dis.readUTF()),
+                                readList(dis, () -> new Organization.Position(
+                                        readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()
+                                ))
+                        )));
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private <T> List<T> readList(DataInputStream dis, ElementReader<T> reader) throws IOException {

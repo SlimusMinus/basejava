@@ -1,6 +1,5 @@
 package com.urize.webapp.sql;
 
-import com.urize.webapp.exception.ResumeExistStorageException;
 import com.urize.webapp.exception.StorageException;
 import com.urize.webapp.util.ConnectionFactory;
 
@@ -8,10 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class SQLHelper {
+public class SqlHelper {
     private final ConnectionFactory connectionFactory;
 
-    public SQLHelper(ConnectionFactory connectionFactory) {
+    public SqlHelper(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
@@ -40,7 +39,7 @@ public class SQLHelper {
                 throw ExceptionUtil.convertException(e);
             }
         } catch (SQLException e) {
-            throw new StorageException(e.getMessage(), "uid");
+            throw new StorageException(e);
         }
     }
 }

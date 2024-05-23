@@ -12,9 +12,10 @@ public class XmlSerializer implements SerializableInterface{
 
     public XmlSerializer() {
         xmlParser = new XmlParser(
-                Resume.class, Company.class, Link.class,
-                CompanySection.class, TextSection.class, ListSection.class, Company.Period.class);
+                Resume.class, Organization.class, Link.class,
+                OrganizationSection.class, TextSection.class, ListSection.class, Organization.Position.class);
     }
+
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {
         try (Writer w = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {

@@ -3,14 +3,17 @@ package com.urize.webapp.servlet;
 import com.urize.webapp.model.*;
 import com.urize.webapp.sql.Config;
 import com.urize.webapp.storage.Storage;
+import com.urize.webapp.util.DateUtil;
+import com.urize.webapp.util.HtmlUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.YearMonth;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -45,7 +48,7 @@ public class ResumeServlet extends HttpServlet {
             case "edit":
                 r = storage.get(uuid);
                 for (SectionType type : SectionType.values()) {
-                    AbstractSection section = r.getSection(type);
+                    Section section = r.getSection(type);
                     switch (type) {
                         case OBJECTIVE:
                         case PERSONAL:
@@ -61,21 +64,21 @@ public class ResumeServlet extends HttpServlet {
                             break;
                         case EXPERIENCE:
                         case EDUCATION:
-                            CompanySection orgSection = (CompanySection) section;
-                            List<Company> emptyFirstOrganizations = new ArrayList<>();
-                            emptyFirstOrganizations.add(Company.EMPTY);
+                            OrganizationSection orgSection = (OrganizationSection) section;
+                            List<Organization> emptyFirstOrganizations = new ArrayList<>();
+                            emptyFirstOrganizations.add(Organization.EMPTY);
                             if (orgSection != null) {
-                                for (Company org : orgSection.getList()) {
-                                    List<Company.Period> emptyFirstPositions = new ArrayList<>();
-                                    emptyFirstPositions.add(Company.Period.EMPTY);
-                                    emptyFirstPositions.addAll(org.getPeriods());
-                                    emptyFirstOrganizations.add(new Company(org.getLink(), emptyFirstPositions));
+                                for (Organization org : orgSection.getList()) {
+                                    List<Organization.Position> emptyFirstPositions = new ArrayList<>();
+                                    emptyFirstPositions.add(Organization.Position.EMPTY);
+                                    emptyFirstPositions.addAll(org.getPositions());
+                                    emptyFirstOrganizations.add(new Organization(org.getHomePage(), emptyFirstPositions));
                                 }
                             }
-                            section = new CompanySection(emptyFirstOrganizations);
+                            section = new OrganizationSection(emptyFirstOrganizations);
                             break;
                     }
-                    r.addSections(type, section);
+                    r.setSection(type, section);
                 }
                 break;
             default:
@@ -103,51 +106,53 @@ public class ResumeServlet extends HttpServlet {
             r.setFullName(fullName);
         }
 
-        for (ContactsType type : ContactsType.values()) {
+        for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value == null || value.isEmpty()) {
+            if (HtmlUtil.isEmpty(value)) {
                 r.getContacts().remove(type);
             } else {
-                r.addContacts(type, value);
+                r.setContact(type, value);
             }
         }
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
-            if (value == null || value.isEmpty() && values.length < 2) {
+            if (HtmlUtil.isEmpty(value) && values.length < 2) {
                 r.getSections().remove(type);
             } else {
                 switch (type) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        r.addSections(type, new TextSection(value));
+                        r.setSection(type, new TextSection(value));
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        r.addSections(type, new ListSection(value.split("\\n")));
+                        List<String> items = Arrays.asList(value.split("\\n"));
+                        items.removeIf(String::isEmpty);
+                        r.setSection(type, new ListSection(items));
                         break;
                     case EDUCATION:
                     case EXPERIENCE:
-                        List<Company> orgs = new ArrayList<>();
+                        List<Organization> orgs = new ArrayList<>();
                         String[] urls = request.getParameterValues(type.name() + "url");
                         for (int i = 0; i < values.length; i++) {
                             String name = values[i];
-                            if (name == null || name.isEmpty()) {
-                                List<Company.Period> positions = new ArrayList<>();
+                            if (!HtmlUtil.isEmpty(name)) {
+                                List<Organization.Position> positions = new ArrayList<>();
                                 String pfx = type.name() + i;
                                 String[] startDates = request.getParameterValues(pfx + "startDate");
                                 String[] endDates = request.getParameterValues(pfx + "endDate");
                                 String[] titles = request.getParameterValues(pfx + "title");
                                 String[] descriptions = request.getParameterValues(pfx + "description");
                                 for (int j = 0; j < titles.length; j++) {
-                                    if (titles[j] == null || titles[j].isEmpty()) {
-                                        positions.add(new Company.Period(YearMonth.parse(startDates[j]), YearMonth.parse(endDates[j]), titles[j], descriptions[j]));
+                                    if (!HtmlUtil.isEmpty(titles[j])) {
+                                        positions.add(new Organization.Position(DateUtil.parse(startDates[j]), DateUtil.parse(endDates[j]), titles[j], descriptions[j]));
                                     }
                                 }
-                                orgs.add(new Company(new Link(name, urls[i]), positions));
+                                orgs.add(new Organization(new Link(name, urls[i]), positions));
                             }
                         }
-                        r.addSections(type, new CompanySection(orgs));
+                        r.setSection(type, new OrganizationSection(orgs));
                         break;
                 }
             }

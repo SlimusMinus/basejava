@@ -10,7 +10,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 
-public class ListSection extends AbstractSection {
+public class ListSection extends Section {
     List<String> list;
     public static final ListSection EMPTY = new ListSection("");
 

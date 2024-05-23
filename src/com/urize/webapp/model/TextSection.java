@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Objects;
 @Getter
 @NoArgsConstructor
-public class TextSection extends AbstractSection implements Serializable {
+public class TextSection extends Section implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private String section;

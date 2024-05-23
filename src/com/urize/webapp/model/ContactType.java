@@ -3,7 +3,7 @@ package com.urize.webapp.model;
 import lombok.Getter;
 
 @Getter
-public enum ContactsType {
+public enum ContactType {
     PHONE("Phone"),
     SKYPE("Skype") {
         @Override
@@ -43,7 +43,7 @@ public enum ContactsType {
     };
     private final String title;
 
-    ContactsType(String title) {
+    ContactType(String title) {
         this.title = title;
     }
 

@@ -1,17 +1,16 @@
 package com.urize.webapp.util;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-public class LocalDateAdapter extends XmlAdapter<String, YearMonth> {
+import java.time.LocalDate;
+public class LocalDateAdapter extends XmlAdapter<String, LocalDate> {
 
     @Override
-    public YearMonth unmarshal(String v) throws Exception {
-        return YearMonth.parse(v);
+    public LocalDate unmarshal(String str) throws Exception {
+        return LocalDate.parse(str);
     }
 
     @Override
-    public String marshal(YearMonth v) throws Exception {
-        return v.toString();
+    public String marshal(LocalDate ld) throws Exception {
+        return ld.toString();
     }
 }
