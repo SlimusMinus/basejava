@@ -1,7 +1,6 @@
 package ru.javawebinar.basejava;
 
-
-import com.urize.webapp.model.*;
+import ru.javawebinar.basejava.model.*;
 
 import java.time.Month;
 import java.util.UUID;

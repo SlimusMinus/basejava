@@ -1,11 +1,14 @@
 package ru.javawebinar.basejava.storage;
 
+import ru.javawebinar.basejava.Config;
 
-import com.urize.webapp.sql.Config;
-
+/**
+ * gkislin
+ * 23.06.2016
+ */
 public class SqlStorageTest extends AbstractStorageTest {
 
     public SqlStorageTest() {
-        super(Config.getInstance().getStorage());
+        super(Config.get().getStorage());
     }
 }
