@@ -1,4 +1,5 @@
 <%@ page import="ru.javawebinar.basejava.model.ContactType" %>
+<%@ page import="ru.javawebinar.basejava.Config" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -9,9 +10,11 @@
     <link rel="stylesheet" href="../../css/edit-resume-styles.css">
 </head>
 <body>
-
 <jsp:include page="fragments/header.jsp"/>
-
+<form action="resumes" method="get">
+    <input type="hidden" name="action" value="add">
+    <button type="submit">Добавить новое резюме</button>
+</form>
 <table border="1">
     <tr>
         <th>num</th>
@@ -30,10 +33,7 @@
         </tr>
     </c:forEach>
 </table>
-<form action="resumes" method="get">
-    <input type="hidden" name="action" value="add">
-    <button type="submit">Добавить новое резюме</button>
-</form>
+
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

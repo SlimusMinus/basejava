@@ -114,7 +114,7 @@ public class ResumeServlet extends HttpServlet {
         response.sendRedirect("resumes?theme=" + getTheme(request));
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
         request.setAttribute("theme", getTheme(request));

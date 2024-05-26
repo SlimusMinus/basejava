@@ -9,4 +9,4 @@
 <header>
     <a href="resumes">Управление резюме</a>
 </header>
-<hr/>
+
